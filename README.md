@@ -30,12 +30,14 @@ CNN or report invented performance results. M2 owns training; M3 owns evaluation
 ```text
 notebooks/01_M1_Data_Setup.ipynb   # Colab entry point
 src/data.py                     # download, verify, segment, split, audit, dataset
+src/prepare.py                  # safe first-run build / existing-cache reuse
 src/augmentation.py             # training-only waveform augmentation
 tests/test_data.py              # synthetic protocol tests, not reported metrics
 data/raw/mitdb/                  # 44 original .hea/.dat/.atr triplets
 data/processed/                  # generated NPZs ignored by Git; audit metadata kept
 docs/project_plan.md            # supplied project plan, preserved verbatim
 docs/M1_HANDOFF.md              # interface and experiment caveats for M2/M3
+docs/report/                    # M1 methods, related work and AI-use drafts
 docs/DATA_SOURCES.md            # attribution and dataset terms
 results/                        # M2/M3 outputs (not versioned)
 requirements.txt                # portable data environment
@@ -162,7 +164,7 @@ normally provides PyTorch already; choose a suitable build for local hardware.
 ```bash
 python -m pip install -r requirements.txt
 python -m unittest discover -s tests -v
-python -m src.data build
+python -m src.prepare
 python -m src.data audit
 ```
 
@@ -174,11 +176,32 @@ python -m src.data download --raw-dir data/raw/mitdb_refetch
 python -m src.data build --raw-dir data/raw/mitdb_refetch --output-dir data/processed_refetch
 ```
 
-Use an **empty output directory** for a fresh build; no generated data are
-silently overwritten. The manifest records raw-file checksums, software versions,
+`src.prepare` handles a fresh Git clone, which contains metadata but no NPZs:
+it builds missing arrays in a staging directory and then publishes them. Complete
+caches are audited and reused. Partial or mismatched caches are rejected without
+overwriting arrays. For a new configuration choose an **empty output directory**.
+The lower-level `src.data build` still requires an empty output directory.
+The manifest records raw-file checksums, software versions,
 normalisation parameters, all record lists, class counts, exclusions and overlaps.
 Its NPZ checksums detect later modifications. The audit reopens all files and
 checks the actual arrays rather than trusting the summary alone.
+
+The GitHub Actions workflow runs the protocol tests, prepares the real data from
+a fresh Linux checkout and executes the portable notebook cells. This supplements
+local verification; it is not a substitute for a Google-hosted Colab run.
+
+## M1 report and handoff
+
+- [Data and features draft](docs/report/M1_DATA_METHODS.md): actual retained
+  counts, partitions, RR definitions, augmentation and limitations. Regenerate
+  after data changes with `python tools/write_m1_report.py`.
+- [Related-work contribution](docs/report/M1_RELATED_WORK.md): focused primary
+  sources and the exact scope of claims verified.
+- [AI-use contribution](docs/report/M1_AI_USE_DRAFT.md): merge with the team's
+  actual disclosures; no independent human reproduction is claimed prematurely.
+
+These are M1 contributions for M3 to shorten and merge into the ten-page report.
+No classification scores are included before M2/M3 run the experiments.
 
 ## Attribution and AI use
 

@@ -1,0 +1,43 @@
+name: M1 data validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'tools/**'
+      - 'notebooks/**'
+      - 'requirements.txt'
+      - 'data/**'
+      - '.github/workflows/m1-validation.yml'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux-data-and-notebook:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install data dependencies and CPU PyTorch
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Test data, leakage guards and first-run cache preparation
+        run: python -m unittest discover -s tests -v
+      - name: Build real data from metadata-only checkout
+        run: python -m src.prepare
+      - name: Execute portable notebook cells and validate batch interface
+        run: python tools/validate_notebook.py --output docs/notebook_validation_ci.json
+      - name: Regenerate M1 methods draft from actual counts
+        run: |
+          python tools/write_m1_report.py
+          git diff --exit-code -- docs/report/M1_DATA_METHODS.md

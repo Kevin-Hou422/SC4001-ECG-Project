@@ -10,6 +10,9 @@
 - Four offline RR features and four on-the-fly training augmentations.
 - NPZ loader, PyTorch-compatible dictionary dataset and Colab setup notebook.
 - Reproduction instructions, provenance metadata and protocol tests.
+- Safe first-run generation from a Git clone containing metadata but no NPZs.
+- M1 methods, related-work and AI-use report contributions in `docs/report/`.
+- Linux CI workflow for protocol tests, real-data preparation and portable cells.
 
 ## For M2
 
@@ -53,9 +56,21 @@ No model or loss implementation is supplied here; that is M2's work.
 
 Autoencoder pretraining (E6) is deferred as explicitly optional in the plan.
 It must use the actual training subset only, excluding validation and DS2.
+Implementing encoder transfer should follow M2's frozen baseline architecture;
+the setup does not invent a second encoder contract ahead of that decision.
 M2/M3 experiments, a human teammate's code review, and an actual Google-hosted
 Colab run are not represented as completed merely by providing this setup.
 
 The notebook can be validated cell-by-cell locally for portable code, but a
 Google runtime session and optional Drive consent require the user's account.
 See `validation.json` for the checks actually run on this repository snapshot.
+
+## Remaining human/integration steps
+
+- Run the updated notebook in a signed-in Google Colab runtime and save outputs.
+  The available in-app browser was signed out when inspected on 20 October 2026.
+- M2/M3 should use one agreed patient protocol consistently. Both remain available;
+  only `patient_strict` supports the strict subject-disjoint claim.
+- Integrate and shorten M1's report drafts; add the team's actual training results.
+- A teammate should review M1's code; M1 should review a teammate's implementation
+  when available, as required by the group plan. This review is not yet recorded.

@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "python": "3.12.14",
+  "platform": "Windows",
+  "compiled_code_cells": [
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    16,
+    18
+  ],
+  "executed_portable_cells": [
+    6,
+    8,
+    12,
+    14,
+    16,
+    18
+  ],
+  "raw_files_verified": 132,
+  "raw_bytes": 86037073,
+  "pytorch_batch_shapes": {
+    "X": [
+      128,
+      1,
+      256
+    ],
+    "y": [
+      128
+    ],
+    "rr": [
+      128,
+      4
+    ],
+    "pid": [
+      128
+    ],
+    "subject_id": [
+      128
+    ],
+    "sample": [
+      128
+    ]
+  },
+  "hosted_google_colab_run": false,
+  "not_executed": [
+    "Google login/runtime connection",
+    "Drive mount/backup",
+    "clone/install cells (environment provisioned separately)"
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "unit_tests": 19,
+  "unit_tests": 25,
   "failures": 0,
   "errors": 0,
   "skipped": 0,
@@ -8,6 +8,7 @@
   "host": "Windows / Python 3.12",
   "hosted_google_colab_run": false,
   "notebook_portable_cells_executed_locally": [
+    6,
     8,
     12,
     14,
@@ -21,5 +22,12 @@
   "source_sha256": {
     "data.py": "e62f6adb4af9121896fe02db900821813799538d91cba969f2c5c8d0c898bbf8",
     "augmentation.py": "dd3141573a39351d52623db99dcf040e6e1d15e2b0300abcf29311cd17a46219"
-  }
+  },
+  "metadata_only_fresh_checkout_build_passed": true,
+  "additional_source_sha256": {
+    "src\\prepare.py": "e67656fa698fb8c657f74fd7f4a170d3d3b4f6e9ea10119a9d6e35d2a0d6cf05",
+    "tools\\validate_notebook.py": "b2ec7ec71a34206b039661f1a7ce47c769e50bd2110f6400cd5887805e275aae",
+    "tools\\write_m1_report.py": "f0824eda52ec2afbb8dd933d8c5bcc41b047b53b2e8e1c0ce76aaf2915157e2f"
+  },
+  "google_colab_browser_state": "Notebook loads successfully; Google account is signed out. Hosted runtime not executed."
 }

@@ -5,6 +5,7 @@ __pycache__/
 data/processed/*.npz
 data/processed/*.part
 data/processed_v*/
+data/.m1_build_*/
 data/raw/**/*.part
 results/*
 !results/.gitkeep

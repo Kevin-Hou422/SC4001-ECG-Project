@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "starting_state": "source + 132 raw files + reference metadata; zero NPZ files",
+  "generated_npz_files": 9,
+  "class_counts_match_reference": true,
+  "python": "3.12.14",
+  "hosted_google_colab_run": false
+}

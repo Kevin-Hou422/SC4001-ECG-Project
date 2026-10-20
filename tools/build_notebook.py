@@ -108,23 +108,18 @@ subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v
 markdown('''
 ## 6. Build and independently audit model inputs
 
-The first run segments MLII and generates nine NPZ files. Subsequent runs audit
-existing data rather than silently overwriting it. For changed processing code,
+The first run segments MLII and generates nine NPZ files, even though the cloned
+repository already contains reference metadata. Subsequent runs audit complete
+data rather than silently overwriting it. For changed processing code,
 choose a new empty `PROCESSED_DIR`. Normalisation is fitted separately on each
 protocol's training subset; no fitted DS2 statistics enter preprocessing.
 '''),
 code('''
 import json
-from src.data import build, audit, pipeline_hashes
+from src.prepare import ensure_prepared
 
 manifest_path = PROCESSED_DIR / "manifest.json"
-if manifest_path.exists():
-    prior = json.loads(manifest_path.read_text())
-    if prior.get("pipeline_sha256") != pipeline_hashes() or prior["config"]["seed"] != SEED:
-        raise RuntimeError("Existing processed data use different source/seed. Choose a new empty PROCESSED_DIR.")
-    audit(PROCESSED_DIR)
-else:
-    build(RAW_DIR, PROCESSED_DIR, seed=SEED)
+ensure_prepared(RAW_DIR, PROCESSED_DIR, seed=SEED)
 
 manifest = json.loads(manifest_path.read_text())
 print("Active protocol:", PROTOCOL)
