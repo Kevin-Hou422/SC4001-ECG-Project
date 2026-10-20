@@ -1,0 +1,10 @@
+protocol,partition,n,records,subjects,N,S,V,F
+random,train,64404,44,43,57627,1778,4485,514
+random,val,16101,44,43,14407,445,1121,128
+random,test,20125,44,43,18008,556,1401,160
+patient,train,41355,18,18,37352,768,2838,397
+patient,val,9614,4,4,8472,175,950,17
+patient,test,49661,22,22,44218,1836,3219,388
+patient_strict,train,39394,17,17,35719,640,2640,395
+patient_strict,val,9614,4,4,8472,175,950,17
+patient_strict,test,49661,22,22,44218,1836,3219,388

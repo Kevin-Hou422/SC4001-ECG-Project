@@ -1,0 +1,25 @@
+{
+  "unit_tests": 19,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "torch_version": "2.14.1+cpu",
+  "notebook_code_cells_compile": true,
+  "host": "Windows / Python 3.12",
+  "hosted_google_colab_run": false,
+  "notebook_portable_cells_executed_locally": [
+    8,
+    12,
+    14,
+    16,
+    18
+  ],
+  "raw_files_verified": 132,
+  "raw_records": 44,
+  "raw_size_bytes": 86037073,
+  "real_data_pipeline_and_audit_passed": true,
+  "source_sha256": {
+    "data.py": "e62f6adb4af9121896fe02db900821813799538d91cba969f2c5c8d0c898bbf8",
+    "augmentation.py": "dd3141573a39351d52623db99dcf040e6e1d15e2b0300abcf29311cd17a46219"
+  }
+}
