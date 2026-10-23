@@ -12,4 +12,7 @@ results/*
 checkpoints/
 *.pt
 *.pth
+*.pt.part
+local_pretraining/
+m1_e6_notebook_run.json
 

@@ -207,8 +207,8 @@ markdown('''
 - M2: implement the 1D CNN/training loop and run E0-E5 with three model seeds.
 - M3: evaluate the fixed test set, with per-class and per-patient metrics, plus
   S-class results with and without record 232. No selection/tuning on DS2.
-- M1 stretch: autoencoder pretraining uses training patients only, excluding
-  validation and DS2; it is not included in this setup.
+- M1 E6 autoencoder pretraining is available in `02_M1_Autoencoder_Pretraining.ipynb`:
+  train-only source, six encoder exports and an exact transfer interface.
 - Before writing results, confirm which patient protocol the team will use.
 - See `README.md` and `docs/M1_HANDOFF.md` for the full interface and caveats.
 

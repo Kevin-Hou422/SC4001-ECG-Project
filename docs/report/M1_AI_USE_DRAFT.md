@@ -3,12 +3,13 @@
 Draft to be merged with the other members' actual disclosures:
 
 > We used OpenAI Codex to assist with M1's data-pipeline implementation,
-> debugging, test development, documentation and initial methods/related-work
-> drafting. Code was checked using protocol tests and execution on the original
+> debugging, test development, autoencoder pretraining, documentation and
+> methods/related-work drafting. Code was checked using protocol tests and execution on the original
 > MIT-BIH records; source data were verified against publisher checksums. Claims
 > in the related-work draft were checked against the original-paper abstract,
 > authors' preprint or publisher's paper page, with that access scope recorded.
-> No model performance was generated or inferred by these M1 checks.
+> Six fixed-budget autoencoder runs produced training reconstruction diagnostics;
+> no heartbeat classification or unseen-patient performance was inferred from them.
 
 This paragraph describes recorded assistance and executed checks. Before final
 submission the team must add its actual model/tool names where known, describe

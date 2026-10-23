@@ -1,0 +1,78 @@
+{
+  "status": "passed",
+  "runs": [
+    {
+      "status": "passed",
+      "protocol": "patient",
+      "seed": 42,
+      "epochs": 10,
+      "n_train_beats": 41355,
+      "exact_training_npz_sha256_match": true,
+      "training_semantics_and_normalization_match": true,
+      "source_matches_current_pretrain": true,
+      "encoder_sha256": "30d8872bc33fc34bd9a374cbd80d82fdb247f791a9ccacc28ad456d39fed12d6",
+      "classification_evaluated": false
+    },
+    {
+      "status": "passed",
+      "protocol": "patient",
+      "seed": 43,
+      "epochs": 10,
+      "n_train_beats": 41355,
+      "exact_training_npz_sha256_match": true,
+      "training_semantics_and_normalization_match": true,
+      "source_matches_current_pretrain": true,
+      "encoder_sha256": "25f91a935c2c7c49a9a6864100def1c9b843a73199ce0b9b529cdd1c3c73db89",
+      "classification_evaluated": false
+    },
+    {
+      "status": "passed",
+      "protocol": "patient",
+      "seed": 44,
+      "epochs": 10,
+      "n_train_beats": 41355,
+      "exact_training_npz_sha256_match": true,
+      "training_semantics_and_normalization_match": true,
+      "source_matches_current_pretrain": true,
+      "encoder_sha256": "9bd8751809fd28bc8094c50c6f24351015e7ece6ddf246ef77d3bad54c69db79",
+      "classification_evaluated": false
+    },
+    {
+      "status": "passed",
+      "protocol": "patient_strict",
+      "seed": 42,
+      "epochs": 10,
+      "n_train_beats": 39394,
+      "exact_training_npz_sha256_match": true,
+      "training_semantics_and_normalization_match": true,
+      "source_matches_current_pretrain": true,
+      "encoder_sha256": "d10bbbd1720538cf315c7af3a3e81ce365ea95f55b949db06729f8473ed858eb",
+      "classification_evaluated": false
+    },
+    {
+      "status": "passed",
+      "protocol": "patient_strict",
+      "seed": 43,
+      "epochs": 10,
+      "n_train_beats": 39394,
+      "exact_training_npz_sha256_match": true,
+      "training_semantics_and_normalization_match": true,
+      "source_matches_current_pretrain": true,
+      "encoder_sha256": "d858bbd6eb3e71202c90374369354690f7767f64ae4884de55c5f8a813b10421",
+      "classification_evaluated": false
+    },
+    {
+      "status": "passed",
+      "protocol": "patient_strict",
+      "seed": 44,
+      "epochs": 10,
+      "n_train_beats": 39394,
+      "exact_training_npz_sha256_match": true,
+      "training_semantics_and_normalization_match": true,
+      "source_matches_current_pretrain": true,
+      "encoder_sha256": "d8d6c860bac4bba60ca22d45a470aea9868f9d40bc9c924ab0aba8ca270d7746",
+      "classification_evaluated": false
+    }
+  ],
+  "classification_evaluated": false
+}

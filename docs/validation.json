@@ -1,5 +1,5 @@
 {
-  "unit_tests": 25,
+  "unit_tests": 35,
   "failures": 0,
   "errors": 0,
   "skipped": 0,
@@ -29,5 +29,13 @@
     "tools\\validate_notebook.py": "b2ec7ec71a34206b039661f1a7ce47c769e50bd2110f6400cd5887805e275aae",
     "tools\\write_m1_report.py": "f0824eda52ec2afbb8dd933d8c5bcc41b047b53b2e8e1c0ce76aaf2915157e2f"
   },
-  "google_colab_browser_state": "Notebook loads successfully; Google account is signed out. Hosted runtime not executed."
+  "google_colab_browser_state": "23 Oct browser safety check stopped because Chrome URL could not be confidently established; no browser inputs continued.",
+  "e6_full_pretraining_runs": 6,
+  "e6_epochs_per_run": 10,
+  "e6_encoder_export_audit": "passed",
+  "e6_notebook_portable_cells": "passed",
+  "e6_source_sha256": {
+    "src\\pretrain.py": "8a35acac9276d12e8f38a4628540ede79595b32a763a0e50813b97789eed0785",
+    "src\\pretrain_audit.py": "b87d51d91484c0f629d618311486f09209340ceff87842aa516413c4e92be571"
+  }
 }

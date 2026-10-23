@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "compiled_code_cells": [
+    2,
+    4,
+    6,
+    8,
+    10,
+    12
+  ],
+  "executed_portable_cells": [
+    6,
+    8,
+    10,
+    12
+  ],
+  "hosted_google_colab_run": false,
+  "published_exports_audited": 3,
+  "pretraining_rerun_in_this_check": false,
+  "feature_map_shape": [
+    4,
+    64,
+    32
+  ],
+  "embedding_shape": [
+    4,
+    64
+  ]
+}

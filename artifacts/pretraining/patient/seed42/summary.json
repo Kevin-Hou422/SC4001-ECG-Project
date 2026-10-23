@@ -1,0 +1,153 @@
+{
+  "status": "completed",
+  "config": {
+    "seed": 42,
+    "epochs": 10,
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "threads": 2,
+    "device": "cpu"
+  },
+  "data": {
+    "protocol": "patient",
+    "train_sha256": "3ff8119f378da63cb4158dc1edb03514155b5d77240c247e22d99fdf9129d5a6",
+    "manifest_sha256": "e2d8a4ad2ba8310df9b72de447e9401f5510858073636ffca60d4613694343c7",
+    "n_beats": 41355,
+    "records": [
+      101,
+      106,
+      109,
+      112,
+      114,
+      115,
+      116,
+      119,
+      122,
+      124,
+      201,
+      205,
+      207,
+      208,
+      209,
+      215,
+      220,
+      230
+    ],
+    "normalization": {
+      "x_mean": -0.38087122650984057,
+      "x_std": 0.5016990037756096,
+      "rr_mean": [
+        0.7850006717700737,
+        0.7850982684579471,
+        0.7851051788457777,
+        0.9995800507413103
+      ],
+      "rr_std": [
+        0.5409976140042263,
+        0.5411443830820888,
+        0.23960811783064756,
+        0.1459671843630283
+      ]
+    },
+    "pipeline_sha256": {
+      "data.py": "e62f6adb4af9121896fe02db900821813799538d91cba969f2c5c8d0c898bbf8",
+      "augmentation.py": "dd3141573a39351d52623db99dcf040e6e1d15e2b0300abcf29311cd17a46219"
+    },
+    "class_names": [
+      "N",
+      "S",
+      "V",
+      "F"
+    ],
+    "uses_labels_for_optimization": false,
+    "uses_validation_or_test_for_optimization": false
+  },
+  "architecture": {
+    "name": "m1_conv_encoder_v1",
+    "input_shape": [
+      1,
+      256
+    ],
+    "channels": [
+      16,
+      32,
+      64
+    ],
+    "kernels": [
+      7,
+      5,
+      5
+    ],
+    "strides": [
+      2,
+      2,
+      2
+    ],
+    "normalization": "GroupNorm(4,16), GroupNorm(4,32), GroupNorm(8,64)",
+    "activation": "ReLU",
+    "output_shape": [
+      64,
+      32
+    ],
+    "embedding_dim": 64
+  },
+  "initial_train_mse": 4.469169147183826,
+  "final_train_mse": 0.00701929727469458,
+  "history": [
+    {
+      "epoch": 1,
+      "train_online_mse": 0.3268682231751182
+    },
+    {
+      "epoch": 2,
+      "train_online_mse": 0.029131680953670747
+    },
+    {
+      "epoch": 3,
+      "train_online_mse": 0.019115148625824037
+    },
+    {
+      "epoch": 4,
+      "train_online_mse": 0.015795020516247923
+    },
+    {
+      "epoch": 5,
+      "train_online_mse": 0.013579647567710613
+    },
+    {
+      "epoch": 6,
+      "train_online_mse": 0.012024329893926967
+    },
+    {
+      "epoch": 7,
+      "train_online_mse": 0.0107392610335562
+    },
+    {
+      "epoch": 8,
+      "train_online_mse": 0.009685660363417068
+    },
+    {
+      "epoch": 9,
+      "train_online_mse": 0.008792133498682414
+    },
+    {
+      "epoch": 10,
+      "train_online_mse": 0.008036214842656075
+    }
+  ],
+  "selection": "final epoch of fixed budget; no validation/test selection",
+  "diagnostic": "training reconstruction only; not classification/generalisation performance",
+  "encoder_parameters": 13248,
+  "autoencoder_parameters": 23697,
+  "encoder_sha256": "30d8872bc33fc34bd9a374cbd80d82fdb247f791a9ccacc28ad456d39fed12d6",
+  "export_file_sha256": "a07ea39d31f0cf30867396cc3fca7d262cc889be226944c6d6ecb674b2865fb8",
+  "source_sha256": "8a35acac9276d12e8f38a4628540ede79595b32a763a0e50813b97789eed0785",
+  "elapsed_seconds": 59.84299999999712,
+  "software": {
+    "python": "3.12.14",
+    "torch": "2.14.1+cpu",
+    "numpy": "2.5.4",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}

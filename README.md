@@ -2,11 +2,18 @@
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kevin-Hou422/SC4001-ECG-Project/blob/main/notebooks/01_M1_Data_Setup.ipynb)
 
+[E6 pretraining Colab notebook](https://colab.research.google.com/github/Kevin-Hou422/SC4001-ECG-Project/blob/main/notebooks/02_M1_Autoencoder_Pretraining.ipynb)
+
 M1 data pipeline for the group project. The repository includes the **44 raw
 MIT-BIH records used by this project** (about 86 MB), their reference heartbeat
 annotations, publisher checksums, and a notebook that generates the model inputs.
 The four paced records (102, 104, 107, 217) are deliberately excluded. This is a
 project subset of the 48-record database, not a newly collected dataset.
+
+M1 also supplies **six trained autoencoder encoder exports** (two patient
+protocols x three seeds, ten epochs each), with source/data checksums, histories,
+independent audit and M2 transfer instructions. See [E6 details](docs/E6_PRETRAINING.md).
+These are pretraining results; no supervised classifier performance is claimed.
 
 ## Start in Google Colab
 
@@ -32,6 +39,8 @@ notebooks/01_M1_Data_Setup.ipynb   # Colab entry point
 src/data.py                     # download, verify, segment, split, audit, dataset
 src/prepare.py                  # safe first-run build / existing-cache reuse
 src/augmentation.py             # training-only waveform augmentation
+src/pretrain.py                 # E6 autoencoder, resume and strict encoder loading
+src/pretrain_audit.py           # independent export/data/interface checks
 tests/test_data.py              # synthetic protocol tests, not reported metrics
 data/raw/mitdb/                  # 44 original .hea/.dat/.atr triplets
 data/processed/                  # generated NPZs ignored by Git; audit metadata kept
@@ -42,10 +51,13 @@ docs/DATA_SOURCES.md            # attribution and dataset terms
 results/                        # M2/M3 outputs (not versioned)
 requirements.txt                # portable data environment
 requirements-lock.txt           # exact locally tested M1 environment
+requirements-pretrain.txt       # data requirements plus PyTorch
+artifacts/pretraining/          # six small encoder exports and full run summaries
 ```
 
 `src/models.py`, `src/train.py` and `src/evaluate.py` will be added by M2/M3.
-Checkpoints and generated arrays are not repeatedly committed. Raw source files
+Mutable optimiser checkpoints and generated arrays are not repeatedly committed.
+The six final E6 encoder exports are explicitly versioned. Raw source files
 are unchanged and each is under 2 MB; Git LFS is unnecessary for this subset.
 
 ## Data contract
@@ -187,14 +199,35 @@ Its NPZ checksums detect later modifications. The audit reopens all files and
 checks the actual arrays rather than trusting the summary alone.
 
 The GitHub Actions workflow runs the protocol tests, prepares the real data from
-a fresh Linux checkout and executes the portable notebook cells. This supplements
+a fresh Linux checkout, executes portable notebook cells, audits published E6
+exports and performs a separate real-data one-epoch E6 training check. This supplements
 local verification; it is not a substitute for a Google-hosted Colab run.
+
+## E6 pretraining
+
+```bash
+python -m pip install -r requirements-pretrain.txt
+python -m src.pretrain_audit
+# Independent rerun in a new output directory:
+python -m src.pretrain --protocol patient --seeds 42 43 44 --epochs 10 --output-dir local_pretraining
+```
+
+The same command supports `--protocol patient_strict`. Validation/test/random
+archives cannot be used for E6 pretraining. Each epoch saves resumable state;
+`--resume` requires identical data, source and settings. See
+[the encoder contract](docs/E6_PRETRAINING.md) before integrating with M2's CNN.
+Data-only environments without PyTorch skip the E6 tests; the full test suite
+requires PyTorch and is run in CI.
 
 ## M1 report and handoff
 
 - [Data and features draft](docs/report/M1_DATA_METHODS.md): actual retained
   counts, partitions, RR definitions, augmentation and limitations. Regenerate
   after data changes with `python tools/write_m1_report.py`.
+- [Concise integration text](docs/report/M1_REPORT_INSERT.md): shorter methods
+  contribution including E6; ready for M3 to incorporate with final experiment choices.
+- [Executed E6 diagnostics](docs/report/M1_E6_RESULTS.md): six actual training
+  runs and their interpretation limits, with [training curves](docs/pretraining_curves.png).
 - [Related-work contribution](docs/report/M1_RELATED_WORK.md): focused primary
   sources and the exact scope of claims verified.
 - [AI-use contribution](docs/report/M1_AI_USE_DRAFT.md): merge with the team's
@@ -202,6 +235,8 @@ local verification; it is not a substitute for a Google-hosted Colab run.
 
 These are M1 contributions for M3 to shorten and merge into the ten-page report.
 No classification scores are included before M2/M3 run the experiments.
+See [M1 completion status](docs/M1_COMPLETION.md) and [implementation review](docs/M1_REVIEW.md)
+for completed deliverables and the external human/runtime steps still to record.
 
 ## Attribution and AI use
 

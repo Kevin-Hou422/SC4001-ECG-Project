@@ -9,6 +9,8 @@ on:
       - 'tools/**'
       - 'notebooks/**'
       - 'requirements.txt'
+      - 'requirements-pretrain.txt'
+      - 'artifacts/**'
       - 'data/**'
       - '.github/workflows/m1-validation.yml'
   pull_request:
@@ -37,6 +39,14 @@ jobs:
         run: python -m src.prepare
       - name: Execute portable notebook cells and validate batch interface
         run: python tools/validate_notebook.py --output docs/notebook_validation_ci.json
+      - name: Audit published E6 encoders on the Linux-prepared cohort
+        run: python -m src.pretrain_audit --output docs/pretraining_validation_ci.json
+      - name: Execute portable E6 notebook cells
+        run: python tools/validate_pretrain_notebook.py
+      - name: Real-data E6 one-epoch training and export check
+        run: |
+          python -m src.pretrain --protocol patient_strict --seeds 42 --epochs 1 --output-dir /tmp/m1-e6-ci
+          python -m src.pretrain_audit --protocols patient_strict --seeds 42 --epochs 1 --artifact-dir /tmp/m1-e6-ci --output /tmp/m1-e6-ci/audit.json
       - name: Regenerate M1 methods draft from actual counts
         run: |
           python tools/write_m1_report.py
