@@ -4,14 +4,11 @@ E0-E4: ECGCNN(use_rr=False)     -> logits (batch, 4)
 E5:    ECGCNN(use_rr=True)      -> logits (batch, 4)
 E6:    ECGCNN(use_rr=False) with the same encoder initialised from M1's export.
 
-The convolutional encoder is IMPORTED from src.pretrain instead of redefined so
 E1 and E6 can use identical architectures; only initial weights differ.
 
-Inputs follow src.data.ECGDataset:
-  X  : (batch, 1, 256), float32, train-standardised waveform
-  rr : (batch, 4), float32, train-standardised timing features (E5 only)
 
-Return raw logits, NOT probabilities, for nn.CrossEntropyLoss / focal loss.
+
+Return raw logits for nn.CrossEntropyLoss / focal loss.
 """
 from __future__ import annotations
 
@@ -26,7 +23,6 @@ from .pretrain import ECGEncoder, load_pretrained_encoder
 
 class ECGCNN(nn.Module):
     """Small 1D CNN with optional late fusion of four RR-interval features.
-
     Architecture:
       ECG waveform (B, 1, 256)
         -> M1's Conv1d encoder (B, 64, 32)
@@ -42,7 +38,7 @@ class ECGCNN(nn.Module):
     def __init__(self, use_rr: bool = False):
         super().__init__()
         self.use_rr = bool(use_rr)
-        self.encoder = ECGEncoder()  # Exact architecture provided by M1.
+        self.encoder = ECGEncoder()  
         self.pool = nn.AdaptiveAvgPool1d(1)
         input_features = 64 + (len(RR_NAMES) if self.use_rr else 0)
         self.classifier = nn.Linear(input_features, len(CLASS_NAMES))
@@ -71,7 +67,6 @@ class ECGCNN(nn.Module):
         """E6 only: load M1's encoder and verify the exact training archive.
 
         This checks both the exported architecture/state checksum and the
-        SHA256 of the training NPZ that was used for unsupervised pretraining.
         It raises on a mismatch rather than silently loading partial weights.
         The classification head is *not* pretrained and remains random.
         """
