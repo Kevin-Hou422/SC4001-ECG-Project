@@ -2,9 +2,9 @@
 
 Draft for integration into the group's ten-page report. This describes the
 implemented and locally verified preprocessing. It contains **no CNN results**.
-The default benchmark is the agreed conventional `patient` protocol; the strict
-variant is separately identified. M2/M3 must state which variant produced their
-final model results and keep this section consistent with that choice.
+The main patient protocol for the completed E1-E5 runs is `patient_strict`, as
+recorded in M3's 27 October handoff. E0 uses `random`. The conventional `patient`
+protocol remains available as a reference and was not used for those E1-E5 runs.
 
 ## Dataset and task
 
@@ -63,13 +63,20 @@ model performance. However, the official database documentation identifies recor
 201 and 202 as the same subject [1]. Their placement on opposite sides means that
 this conventional benchmark is not completely subject-independent.
 
-We therefore also provide a strict variant that removes record 201 from training,
+Our main `patient_strict` protocol therefore removes record 201 from training,
 keeps the same validation records and leaves DS2 unchanged. Its 17 training
 subjects, four validation subjects and 22 test subjects are disjoint. This is an
 explicit project modification, not the unmodified de Chazal protocol. A comparison
 of random and patient splits also changes data composition and training size;
 an observed performance difference cannot isolate patient overlap as its sole
 cause. No direction or magnitude of that difference is assumed in advance.
+
+The main E1-E5 training cohort contains 39,394 beats (N=35,719, S=640, V=2,640,
+F=395), validation contains 9,614 beats (N=8,472, S=175, V=950, F=17), and DS2
+contains 49,661 beats (N=44,218, S=1,836, V=3,219, F=388). All E1-E5 experiments
+and all three model seeds use these fixed partitions and strict training-fitted
+normalisation. E0 alone uses the random protocol. Files from different protocol
+prefixes must not be mixed, even where their beat identities coincide.
 
 | Protocol | Partition | Records | Beats | N | S | V | F |
 |---|---|---:|---:|---:|---:|---:|---:|

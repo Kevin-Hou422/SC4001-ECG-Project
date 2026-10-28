@@ -1,5 +1,6 @@
 {
   "status": "passed",
+  "protocol": "patient_strict",
   "compiled_code_cells": [
     2,
     4,

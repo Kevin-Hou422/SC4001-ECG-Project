@@ -1,0 +1,481 @@
+{
+  "date": "2026-10-28",
+  "reviewed_merge": "f24e1814d542500468f630d30608adaf10867c73",
+  "python": "3.12.14",
+  "numpy": "2.5.4",
+  "torch": "2.14.1+cpu",
+  "manifest": {
+    "reference_commit": "a4d0f5c",
+    "restored_byte_identical": true,
+    "reference_sha256": "0f30abe962d1a80af333665f2665d106129a19c5c2db9837c7100f9233a911ce",
+    "merged_manifest_rejected_original_cache": "File changed: data/processed/random_train.npz",
+    "changed_archive_hashes": 9,
+    "config_source_pipeline_unchanged": true,
+    "normalization_unchanged": true,
+    "m2_arrays_available_for_tensor_comparison": false,
+    "cohort_metadata_unchanged": true
+  },
+  "e6_exports": [
+    {
+      "status": "passed",
+      "protocol": "patient",
+      "seed": 42,
+      "epochs": 10,
+      "n_train_beats": 41355,
+      "exact_training_npz_sha256_match": true,
+      "training_semantics_and_normalization_match": true,
+      "source_matches_current_pretrain": true,
+      "encoder_sha256": "30d8872bc33fc34bd9a374cbd80d82fdb247f791a9ccacc28ad456d39fed12d6",
+      "classification_evaluated": false
+    },
+    {
+      "status": "passed",
+      "protocol": "patient",
+      "seed": 43,
+      "epochs": 10,
+      "n_train_beats": 41355,
+      "exact_training_npz_sha256_match": true,
+      "training_semantics_and_normalization_match": true,
+      "source_matches_current_pretrain": true,
+      "encoder_sha256": "25f91a935c2c7c49a9a6864100def1c9b843a73199ce0b9b529cdd1c3c73db89",
+      "classification_evaluated": false
+    },
+    {
+      "status": "passed",
+      "protocol": "patient",
+      "seed": 44,
+      "epochs": 10,
+      "n_train_beats": 41355,
+      "exact_training_npz_sha256_match": true,
+      "training_semantics_and_normalization_match": true,
+      "source_matches_current_pretrain": true,
+      "encoder_sha256": "9bd8751809fd28bc8094c50c6f24351015e7ece6ddf246ef77d3bad54c69db79",
+      "classification_evaluated": false
+    },
+    {
+      "status": "passed",
+      "protocol": "patient_strict",
+      "seed": 42,
+      "epochs": 10,
+      "n_train_beats": 39394,
+      "exact_training_npz_sha256_match": true,
+      "training_semantics_and_normalization_match": true,
+      "source_matches_current_pretrain": true,
+      "encoder_sha256": "d10bbbd1720538cf315c7af3a3e81ce365ea95f55b949db06729f8473ed858eb",
+      "classification_evaluated": false
+    },
+    {
+      "status": "passed",
+      "protocol": "patient_strict",
+      "seed": 43,
+      "epochs": 10,
+      "n_train_beats": 39394,
+      "exact_training_npz_sha256_match": true,
+      "training_semantics_and_normalization_match": true,
+      "source_matches_current_pretrain": true,
+      "encoder_sha256": "d858bbd6eb3e71202c90374369354690f7767f64ae4884de55c5f8a813b10421",
+      "classification_evaluated": false
+    },
+    {
+      "status": "passed",
+      "protocol": "patient_strict",
+      "seed": 44,
+      "epochs": 10,
+      "n_train_beats": 39394,
+      "exact_training_npz_sha256_match": true,
+      "training_semantics_and_normalization_match": true,
+      "source_matches_current_pretrain": true,
+      "encoder_sha256": "d8d6c860bac4bba60ca22d45a470aea9868f9d40bc9c924ab0aba8ca270d7746",
+      "classification_evaluated": false
+    }
+  ],
+  "parameter_counts": {
+    "False": 13508,
+    "True": 13524
+  },
+  "classifier_validation": [
+    {
+      "experiment": "E0",
+      "seed": 42,
+      "protocol": "random",
+      "best_epoch": 22,
+      "local_val_macro_f1": 0.8766798708686381,
+      "stored_val_macro_f1": 0.8766798708686381,
+      "abs_diff": 0.0,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E0",
+      "seed": 43,
+      "protocol": "random",
+      "best_epoch": 18,
+      "local_val_macro_f1": 0.8472379846473022,
+      "stored_val_macro_f1": 0.847142012640703,
+      "abs_diff": 9.597200659916538e-05,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E0",
+      "seed": 44,
+      "protocol": "random",
+      "best_epoch": 29,
+      "local_val_macro_f1": 0.89042379447306,
+      "stored_val_macro_f1": 0.89042379447306,
+      "abs_diff": 0.0,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E1",
+      "seed": 42,
+      "protocol": "patient_strict",
+      "best_epoch": 4,
+      "local_val_macro_f1": 0.3833939224881174,
+      "stored_val_macro_f1": 0.3835878147280789,
+      "abs_diff": 0.00019389223996152394,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E1",
+      "seed": 43,
+      "protocol": "patient_strict",
+      "best_epoch": 3,
+      "local_val_macro_f1": 0.38865522057011415,
+      "stored_val_macro_f1": 0.38865522057011415,
+      "abs_diff": 0.0,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E1",
+      "seed": 44,
+      "protocol": "patient_strict",
+      "best_epoch": 2,
+      "local_val_macro_f1": 0.37419369847546113,
+      "stored_val_macro_f1": 0.37419369847546113,
+      "abs_diff": 0.0,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E2",
+      "seed": 42,
+      "protocol": "patient_strict",
+      "best_epoch": 1,
+      "local_val_macro_f1": 0.3697379058583452,
+      "stored_val_macro_f1": 0.36985237836126517,
+      "abs_diff": 0.00011447250291996003,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E2",
+      "seed": 43,
+      "protocol": "patient_strict",
+      "best_epoch": 5,
+      "local_val_macro_f1": 0.3864866309430201,
+      "stored_val_macro_f1": 0.3864660223814638,
+      "abs_diff": 2.0608561556278993e-05,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E2",
+      "seed": 44,
+      "protocol": "patient_strict",
+      "best_epoch": 1,
+      "local_val_macro_f1": 0.3305004264898459,
+      "stored_val_macro_f1": 0.3304213640477253,
+      "abs_diff": 7.9062442120581e-05,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E3",
+      "seed": 42,
+      "protocol": "patient_strict",
+      "best_epoch": 4,
+      "local_val_macro_f1": 0.3815976481959684,
+      "stored_val_macro_f1": 0.38150780433769804,
+      "abs_diff": 8.984385827037755e-05,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E3",
+      "seed": 43,
+      "protocol": "patient_strict",
+      "best_epoch": 3,
+      "local_val_macro_f1": 0.39213111850556115,
+      "stored_val_macro_f1": 0.392022141811858,
+      "abs_diff": 0.00010897669370313334,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E3",
+      "seed": 44,
+      "protocol": "patient_strict",
+      "best_epoch": 2,
+      "local_val_macro_f1": 0.3987554909739777,
+      "stored_val_macro_f1": 0.3987554909739777,
+      "abs_diff": 0.0,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E4",
+      "seed": 42,
+      "protocol": "patient_strict",
+      "best_epoch": 5,
+      "local_val_macro_f1": 0.3971946697414799,
+      "stored_val_macro_f1": 0.39686647665167185,
+      "abs_diff": 0.00032819308980802653,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E4",
+      "seed": 43,
+      "protocol": "patient_strict",
+      "best_epoch": 5,
+      "local_val_macro_f1": 0.3913472768258434,
+      "stored_val_macro_f1": 0.3913472768258434,
+      "abs_diff": 0.0,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E4",
+      "seed": 44,
+      "protocol": "patient_strict",
+      "best_epoch": 2,
+      "local_val_macro_f1": 0.373540017099353,
+      "stored_val_macro_f1": 0.373540017099353,
+      "abs_diff": 0.0,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E5",
+      "seed": 42,
+      "protocol": "patient_strict",
+      "best_epoch": 9,
+      "local_val_macro_f1": 0.3876402009971138,
+      "stored_val_macro_f1": 0.3876563388864326,
+      "abs_diff": 1.6137889318756926e-05,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E5",
+      "seed": 43,
+      "protocol": "patient_strict",
+      "best_epoch": 2,
+      "local_val_macro_f1": 0.3980114921264202,
+      "stored_val_macro_f1": 0.3980114921264202,
+      "abs_diff": 0.0,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    },
+    {
+      "experiment": "E5",
+      "seed": 44,
+      "protocol": "patient_strict",
+      "best_epoch": 2,
+      "local_val_macro_f1": 0.37658593661989836,
+      "stored_val_macro_f1": 0.37658593661989836,
+      "abs_diff": 0.0,
+      "same_train_bytes": false,
+      "epochs_limit": 30,
+      "patience": 4
+    }
+  ],
+  "test_inference_rerun": false,
+  "classifier_training_rerun": false,
+  "fresh_metadata_only_build": {
+    "status": "passed",
+    "archives": [
+      {
+        "file": "patient_strict_test.npz",
+        "all_arrays_exactly_equal": true,
+        "same_container_sha256": true
+      },
+      {
+        "file": "patient_strict_train.npz",
+        "all_arrays_exactly_equal": true,
+        "same_container_sha256": true
+      },
+      {
+        "file": "patient_strict_val.npz",
+        "all_arrays_exactly_equal": true,
+        "same_container_sha256": true
+      },
+      {
+        "file": "patient_test.npz",
+        "all_arrays_exactly_equal": true,
+        "same_container_sha256": true
+      },
+      {
+        "file": "patient_train.npz",
+        "all_arrays_exactly_equal": true,
+        "same_container_sha256": true
+      },
+      {
+        "file": "patient_val.npz",
+        "all_arrays_exactly_equal": true,
+        "same_container_sha256": true
+      },
+      {
+        "file": "random_test.npz",
+        "all_arrays_exactly_equal": true,
+        "same_container_sha256": true
+      },
+      {
+        "file": "random_train.npz",
+        "all_arrays_exactly_equal": true,
+        "same_container_sha256": true
+      },
+      {
+        "file": "random_val.npz",
+        "all_arrays_exactly_equal": true,
+        "same_container_sha256": true
+      }
+    ],
+    "runtime": "same local Python environment; not cross-platform equivalence evidence"
+  },
+  "main_protocol": "patient_strict",
+  "hosted_google_colab_run": false,
+  "human_peer_review_recorded": false,
+  "tests": {
+    "tests_run": 71,
+    "failures": 0,
+    "errors": 0,
+    "skipped": [],
+    "success": true
+  },
+  "original_cache_audit": "passed via ensure_prepared, including raw checksum verification",
+  "notebooks": {
+    "data": {
+      "status": "passed",
+      "python": "3.12.14",
+      "protocol": "patient_strict",
+      "platform": "Windows",
+      "compiled_code_cells": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18
+      ],
+      "executed_portable_cells": [
+        6,
+        8,
+        12,
+        14,
+        16,
+        18
+      ],
+      "raw_files_verified": 132,
+      "raw_bytes": 86037073,
+      "pytorch_batch_shapes": {
+        "X": [
+          128,
+          1,
+          256
+        ],
+        "y": [
+          128
+        ],
+        "rr": [
+          128,
+          4
+        ],
+        "pid": [
+          128
+        ],
+        "subject_id": [
+          128
+        ],
+        "sample": [
+          128
+        ]
+      },
+      "hosted_google_colab_run": false,
+      "not_executed": [
+        "Google login/runtime connection",
+        "Drive mount/backup",
+        "clone/install cells (environment provisioned separately)"
+      ]
+    },
+    "pretraining": {
+      "status": "passed",
+      "protocol": "patient_strict",
+      "compiled_code_cells": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12
+      ],
+      "executed_portable_cells": [
+        6,
+        8,
+        10,
+        12
+      ],
+      "hosted_google_colab_run": false,
+      "published_exports_audited": 3,
+      "pretraining_rerun_in_this_check": false,
+      "feature_map_shape": [
+        4,
+        64,
+        32
+      ],
+      "embedding_shape": [
+        4,
+        64
+      ]
+    }
+  },
+  "report_generation": {
+    "methods": "tools/write_m1_report.py",
+    "insert": "tools/write_m1_completion.py",
+    "main_patient_protocol": "patient_strict"
+  },
+  "limits": [
+    "Same-runtime rebuild comparison does not prove M2 tensor identity.",
+    "Validation score agreement is a reproduction diagnostic, not an integrity proof.",
+    "M2/M3 own open review findings and the final report; no supervised E6 result exists."
+  ],
+  "model_test_optional_torch_guard": {
+    "with_torch_passed": 5,
+    "without_torch_skipped": 5,
+    "without_torch_simulated_via_sys_modules": true
+  }
+}

@@ -69,16 +69,16 @@ print({name: metadata.version(name) for name in ["numpy", "wfdb", "scipy", "pand
 markdown('''
 ## 3. Choose data locations and the experiment protocol
 
-`patient` preserves the planned DS1/DS2 benchmark. **It shares subject 201 through
-records 201/202**. Choose `patient_strict` for a strictly unseen-subject experiment
-(record 201 is removed from training, DS2 stays unchanged). All three protocols
+`patient_strict` is the main E1-E5 protocol used in the group's completed runs:
+record 201 is removed from training and DS2 stays unchanged. The conventional
+`patient` reference shares subject 201 through records 201/202. All three protocols
 are generated, but use a consistent prefix for train/validation/test.
 
 Data-split seed 42 stays fixed across M2's three model-training seeds.
 '''),
 code('''
 SEED = 42
-PROTOCOL = "patient"  # "random", "patient", or "patient_strict"
+PROTOCOL = "patient_strict"  # E1-E5; E0 uses "random"; "patient" is a reference
 RAW_DIR = ROOT / "data/raw/mitdb"
 PROCESSED_DIR = ROOT / "data/processed"
 assert PROTOCOL in {"random", "patient", "patient_strict"}
@@ -209,7 +209,7 @@ markdown('''
   S-class results with and without record 232. No selection/tuning on DS2.
 - M1 E6 autoencoder pretraining is available in `02_M1_Autoencoder_Pretraining.ipynb`:
   train-only source, six encoder exports and an exact transfer interface.
-- Before writing results, confirm which patient protocol the team will use.
+- E1-E5 use `patient_strict`; E0 uses `random`. Do not mix protocol prefixes.
 - See `README.md` and `docs/M1_HANDOFF.md` for the full interface and caveats.
 
 Use **File → Save a copy in Drive** to keep your own notebook with outputs.

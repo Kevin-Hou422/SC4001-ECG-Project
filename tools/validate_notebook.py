@@ -44,6 +44,7 @@ def main():
     plt.gcf().savefig(root / "docs/data_preview.png", dpi=130)
     plt.close("all")
     report = {"status": "passed", "python": platform.python_version(),
+              "protocol": namespace["PROTOCOL"],
               "platform": platform.system(), "compiled_code_cells": compiled,
               "executed_portable_cells": executed,
               "raw_files_verified": len(namespace["hashes"]),

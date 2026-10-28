@@ -26,13 +26,20 @@ training beats per seed. Their reconstruction metrics are not classifier scores.
    because it could not confidently identify the current Chrome URL. A user must
    manually open the notebooks, connect a runtime, run them and save outputs.
    Linux CI and local notebook-cell execution are recorded separately.
-2. **Human peer review.** A teammate must review M1's code. M1's reciprocal review
-   awaits M2/M3 source, which is absent from the shared repository at this snapshot.
-   AI review is not relabelled as a human review.
+2. **Human peer review.** A teammate must review M1's code. M1's reciprocal
+   AI-assisted review of the merged M2/M3 PR #1 is recorded in `M1_PR1_REVIEW.md`,
+   with execution evidence in `M1_HANDOFF_VALIDATION.json`. A member must read and
+   own it before recording human review; AI review is not relabelled as human review.
 3. **Group integration.** M2/M3 own classifier training/evaluation and the combined
-   final report. They must fix one patient protocol and use matching architecture
-   for E1/E6. M1 supplies complete reusable inputs; no missing classifier outcomes
+   final report. E0-E5 checkpoints/results are merged and the main patient protocol
+   is `patient_strict`. E1/E6 must retain matching architecture. M1 supplies reusable
+   inputs; no missing classifier outcomes
    are invented to make the project appear finished.
 
 The optional E6 *pretraining* item is no longer deferred. Its supervised E6
 experiment belongs to M2/M3, as do E0-E5 classifier scores and failure analysis.
+
+The M1 actions requested in M3's 27 October handoff are complete: original
+reference manifest restored, both report-method drafts and notebook defaults
+aligned to `patient_strict`, and PR #1 reviewed with reproducible evidence.
+See `M1_HANDOFF.md` for the response and M1's recommendation on the results freeze.

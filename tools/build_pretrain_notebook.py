@@ -48,7 +48,7 @@ Use one protocol consistently. The conventional `patient` protocol shares the
 seed matches the export seed, while the data-split seed remains 42.
 '''), code('''
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "-r", "requirements-pretrain.txt"], check=True)
-PROTOCOL = "patient"  # alternatively: patient_strict
+PROTOCOL = "patient_strict"  # main protocol; "patient" is the conventional reference
 SEEDS = [42, 43, 44]
 EPOCHS = 10
 PROCESSED = ROOT / "data/processed"

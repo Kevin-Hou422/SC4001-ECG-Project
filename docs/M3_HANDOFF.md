@@ -1,5 +1,11 @@
 # M3 handoff (evaluation and report)
 
+> M1 response, 28 Oct: the original reference manifest has been restored, both
+> M1 methods contributions and setup defaults now use `patient_strict`, and the
+> merged PR #1 has an AI-assisted M1 review in `M1_PR1_REVIEW.md` with execution
+> evidence in `M1_HANDOFF_VALIDATION.json`. See `M1_HANDOFF.md` for M1's position
+> on early stopping and E6. The original M3 requests below are retained for context.
+
 Status 27 Oct: E0–E5 evaluated from M2's checkpoints (3 seeds each,
 `patient_strict`). Results, failure analysis, discussion and conclusion are
 drafted in `docs/report/M3_RESULTS.md` and `docs/report/M3_DISCUSSION.md`, and

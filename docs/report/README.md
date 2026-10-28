@@ -18,7 +18,8 @@ excluding cover, contents, references and appendix). Full draft: Fri 30 Oct.
 | Result tables | M3 | `tables/summary_27oct.md`, `tables/export_check.csv` (frozen copies of the evaluated results) | Ready |
 
 **Protocol.** The main patient protocol is `patient_strict` (M2's runs, 27 Oct).
-M1's methods draft still calls `patient` the default; align it.
+M1's concise and detailed methods drafts and setup notebooks were aligned on
+28 October. `patient` remains a conventional reference, not the E1-E5 main split.
 
 ## Rules we follow
 

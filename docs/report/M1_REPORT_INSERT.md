@@ -1,7 +1,8 @@
 # M1 report insert: data and feature methods
 
-Concise integration text for M3. The group must keep its stated patient protocol
-consistent with the final supervised experiments. The detailed M1 methods and
+Concise integration text for M3. The main E1-E5 patient protocol is
+`patient_strict`, matching the completed runs in M3's 27 October handoff; E0 uses
+`random`. The conventional `patient` protocol is a reference only. Detailed M1 methods and
 training diagnostics are in the companion files, and no classifier result is
 asserted here.
 
@@ -30,16 +31,21 @@ was fixed across model seeds. Same-patient and neighbouring-beat context can occ
 across random partitions. The conventional protocol used DS1/DS2 record lists
 associated with [2], with DS1 records 108, 118, 203 and 223 held out for validation.
 DS2 was reserved for final evaluation. Since records 201 and 202 originate from
-one subject [1], conventional DS1/DS2 is not strictly subject-independent. A strict
-variant removes training record 201 while preserving validation and DS2. Changing
+one subject [1], conventional DS1/DS2 is not strictly subject-independent. Our main
+`patient_strict` protocol removes training record 201 while preserving validation
+and DS2, giving 17 training, four validation and 22 test subjects with no overlap.
+E1-E5 use 39,394 training beats (N=35,719, S=640, V=2,640, F=395), 9,614 validation
+beats (N=8,472, S=175, V=950, F=17) and 49,661 test beats (N=44,218, S=1,836,
+V=3,219, F=388). All three model seeds use the same partitions and strict
+training-fitted normalisation; no protocol prefixes are mixed. Changing
 split also changes cohort composition and training size, so an E0/E1 difference
 cannot be attributed solely to patient overlap.
 
 | Protocol | Train beats | Validation beats | Test beats |
 |---|---:|---:|---:|
-| Random | 64,404 | 16,101 | 20,125 |
-| Conventional | 41,355 | 9,614 | 49,661 |
-| Strict | 39,394 | 9,614 | 49,661 |
+| Random (E0) | 64,404 | 16,101 | 20,125 |
+| Conventional (reference) | 41,355 | 9,614 | 49,661 |
+| Strict (main E1-E5) | 39,394 | 9,614 | 49,661 |
 
 The four RR features are previous RR, next RR, the mean of up to ten preceding RR
 intervals including the current previous interval, and the previous RR divided by
@@ -66,7 +72,8 @@ Only waveform reconstruction MSE was optimised; labels, validation and DS2 were
 unused. Six encoder exports and training histories are available. The supervised
 E1/E6 comparison must use identical architectures and differ only in encoder
 initialisation; reconstruction improvement alone does not establish a classification
-or generalisation benefit.
+or generalisation benefit. No supervised E6 run is available in M3's handoff, so
+H6 remains **not tested**; the encoder exports do not complete that experiment.
 
 ## Reproducibility and limits
 

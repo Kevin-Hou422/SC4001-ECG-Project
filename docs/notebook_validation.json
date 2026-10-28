@@ -1,6 +1,7 @@
 {
   "status": "passed",
   "python": "3.12.14",
+  "protocol": "patient_strict",
   "platform": "Windows",
   "compiled_code_cells": [
     2,

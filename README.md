@@ -22,9 +22,9 @@ These are pretraining results; no supervised classifier performance is claimed.
    choose a GPU for training later.
 3. It clones this repository, installs the data dependencies, verifies raw data,
    runs protocol tests, builds the `.npz` files and audits them.
-4. Use `data/processed/patient_{train,val,test}.npz` for the agreed conventional
-   DS1/DS2 experiments. For a strictly unseen-subject experiment use
-   `patient_strict_{train,val,test}.npz` consistently for all three partitions.
+4. Use `data/processed/patient_strict_{train,val,test}.npz` for the main E1-E5
+   experiments, matching the completed M2 runs. E0 uses `random`. The conventional
+   `patient` prefix remains a reference; keep all three partitions on one prefix.
 5. The last notebook section optionally backs up processed data to Google Drive.
    Colab runtime files disappear when the runtime is recycled; GitHub source and
    the original raw data remain available for rebuilding.
@@ -163,8 +163,8 @@ Do not normalise each augmented beat afterwards, which would cancel gain changes
 from torch.utils.data import DataLoader
 from src.data import ECGDataset
 
-train = ECGDataset('data/processed/patient_train.npz', augment=True, seed=42)
-val = ECGDataset('data/processed/patient_val.npz')
+train = ECGDataset('data/processed/patient_strict_train.npz', augment=True, seed=42)
+val = ECGDataset('data/processed/patient_strict_val.npz')
 loader = DataLoader(train, batch_size=128, shuffle=True,
                     num_workers=0, persistent_workers=False)
 for epoch in range(20):
@@ -248,6 +248,32 @@ normalisation parameters, all record lists, class counts, exclusions and overlap
 Its NPZ checksums detect later modifications. The audit reopens all files and
 checks the actual arrays rather than trusting the summary alone.
 
+### Reference manifest and an existing cache
+
+The committed manifest is the original M1 reference from `a4d0f5c`, restored after
+PR #1 replaced it with another environment's NPZ byte hashes. NPZ compression and
+software versions can change archive bytes. A file-hash mismatch alone establishes
+neither semantic equivalence nor changed samples: keep the manifest belonging to
+each local build, and do not commit regenerated reference metadata.
+
+A fresh clone has no NPZs, so `python -m src.prepare` builds arrays and local
+metadata together. If an existing cache fails audit after pulling the reference
+manifest, preserve it and build into a **new, empty** directory:
+
+```bash
+python -m src.prepare --output-dir data/processed_v2
+python -m src.data audit --output-dir data/processed_v2
+python -m src.predict --data-dir data/processed_v2 --experiments all --seeds 42 43 44
+python -m src.evaluate summarise --processed-dir data/processed_v2 --reference E1 --n-boot 2000
+```
+
+Choose another unused `processed_v*` name if needed. For notebooks, set
+`PROCESSED_DIR` (data notebook) or `PROCESSED` (pretraining notebook) accordingly.
+Do not rewrite a manifest hash to make a changed file pass. The CPU prediction
+route checks validation-score agreement; this is a reproduction diagnostic, not
+a substitute for source, cohort and array-integrity checks. Review details and
+the M1 response to M3 are in [M1 PR #1 review](docs/M1_PR1_REVIEW.md).
+
 The GitHub Actions workflow runs the protocol tests, prepares the real data from
 a fresh Linux checkout, executes portable notebook cells, audits published E6
 exports and performs a separate real-data one-epoch E6 training check. This supplements
@@ -259,14 +285,14 @@ local verification; it is not a substitute for a Google-hosted Colab run.
 python -m pip install -r requirements-pretrain.txt
 python -m src.pretrain_audit
 # Independent rerun in a new output directory:
-python -m src.pretrain --protocol patient --seeds 42 43 44 --epochs 10 --output-dir local_pretraining
+python -m src.pretrain --protocol patient_strict --seeds 42 43 44 --epochs 10 --output-dir local_pretraining
 ```
 
-The same command supports `--protocol patient_strict`. Validation/test/random
+The same command supports the conventional reference `--protocol patient`. Validation/test/random
 archives cannot be used for E6 pretraining. Each epoch saves resumable state;
 `--resume` requires identical data, source and settings. See
 [the encoder contract](docs/E6_PRETRAINING.md) before integrating with M2's CNN.
-Data-only environments without PyTorch skip the E6 tests; the full test suite
+Data-only environments without PyTorch skip the model/E6 tests; the full test suite
 requires PyTorch and is run in CI.
 
 ## M1 report and handoff

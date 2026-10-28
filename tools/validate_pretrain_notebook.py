@@ -14,7 +14,7 @@ def main():
     matplotlib.use("Agg")
     notebook = json.loads((root / "notebooks/02_M1_Autoencoder_Pretraining.ipynb").read_text(encoding="utf-8"))
     compiled, executed = [], []
-    namespace = {"ROOT": root, "PROTOCOL": "patient", "SEEDS": [42, 43, 44],
+    namespace = {"ROOT": root, "PROTOCOL": "patient_strict", "SEEDS": [42, 43, 44],
                  "EPOCHS": 10, "PROCESSED": root / "data/processed",
                  "Path": Path, "sys": sys, "json": json, "subprocess": subprocess}
     for index, cell in enumerate(notebook["cells"]):
@@ -27,7 +27,7 @@ def main():
                                              "selected_seed =", "run_record =")):
             exec(bytecode, namespace)
             executed.append(index)
-    report = {"status": "passed", "compiled_code_cells": compiled,
+    report = {"status": "passed", "protocol": namespace["PROTOCOL"], "compiled_code_cells": compiled,
               "executed_portable_cells": executed, "hosted_google_colab_run": False,
               "published_exports_audited": 3, "pretraining_rerun_in_this_check": False,
               "feature_map_shape": list(namespace["feature_maps"].shape),

@@ -19,16 +19,16 @@
 
 ## For M2
 
-Use the README data contract. For a given comparison choose a consistent
-`patient` or `patient_strict` prefix for E1-E5. Use the same raw data split for all
+Use the README data contract. E1-E5 use the main `patient_strict` prefix, matching
+M2's completed runs; `patient` remains a conventional reference. Use the same raw data split for all
 three training seeds. Fit any class weights from that prefix's training `y` only.
 Call `dataset.set_epoch(epoch)` before each augmented training epoch.
 
 The NPZ `rr` is already standardised. All four columns, including the ratio,
 are standardised; units/formulae are available in `rr_raw` and `rr_names`.
 Do not pass RR to E0-E4 models unless changing and documenting the experiment.
-No supervised classifier or classification loss implementation is supplied here;
-that is M2's work. M1's independent E6 autoencoder and its transfer contract are
+M2's supervised classifier and classification losses are now in `src/models.py`
+and `src/train.py`. M1's independent E6 autoencoder and its transfer contract are
 documented in `E6_PRETRAINING.md`. E1/E6 must use the same downstream architecture.
 
 ## For M3
@@ -63,11 +63,11 @@ E6 pretraining is implemented and executed for both patient protocols, using
 seeds 42/43/44 and ten fixed epochs. The six encoder exports and diagnostics are
 in `artifacts/pretraining/` and `docs/report/M1_E6_RESULTS.md`.
 No validation/test waveforms or class targets enter pretraining optimisation.
-M2 has not yet supplied its baseline architecture. It must adopt the documented
-encoder for both scratch/pretrained conditions, or align pretraining with its
-chosen encoder before running a controlled E1/E6 comparison.
-M2/M3 experiments, a human teammate's code review, and an actual Google-hosted
-Colab run are not represented as completed merely by providing this setup.
+M2's `ECGCNN` now imports M1's `ECGEncoder`; the scratch/pretrained architecture
+contract is compatible. E0-E5 checkpoints and M3's evaluation are merged through
+PR #1. No supervised E6 run exists in that handoff, so H6 remains not tested.
+A human teammate's code review and an actual Google-hosted Colab run are not
+represented as completed merely by providing this setup.
 
 The notebook can be validated cell-by-cell locally for portable code, but a
 Google runtime session and optional Drive consent require the user's account.
@@ -78,9 +78,26 @@ See `validation.json` for the checks actually run on this repository snapshot.
 - Run the updated notebook in a signed-in Google Colab runtime and save outputs.
   On 23 October browser automation was stopped because its safety check could
   not establish the Chrome URL. The hosted run is not falsely marked completed.
-- M2/M3 should use one agreed patient protocol consistently. Both remain available;
-  only `patient_strict` supports the strict subject-disjoint claim.
+- Keep the main E1-E5 protocol `patient_strict` consistent throughout the report.
 - Integrate and shorten M1's report drafts; add the team's actual training results.
-- A teammate should review M1's code; M1 should review a teammate's implementation
-  when available, as required by the group plan. This review is not yet recorded.
-  `M1_REVIEW.md` is an AI-assisted review and does not impersonate a teammate.
+- A teammate should review M1's code. M1's reciprocal AI-assisted review of the
+  merged PR #1 is recorded in `M1_PR1_REVIEW.md`; a member must read and own the
+  findings before recording human review. `M1_REVIEW.md` is the earlier self-review.
+
+## Response to M3's 27 October handoff (completed 28 October)
+
+1. Restored the original `a4d0f5c` manifest. The merged replacement reproduces
+   `File changed: random_train.npz` on M1's original arrays; the restored manifest
+   audits those arrays successfully. Fresh builds retain their own local metadata.
+   See the README's safe new-directory procedure for existing incompatible caches.
+2. Updated both report-method contributions and their generators to state that
+   E1-E5 use `patient_strict`; aligned both M1 notebook defaults and README examples.
+3. Reviewed PR #1 at merge `f24e181`, including model/encoder compatibility,
+   prediction provenance, test-row alignment and metric/bootstrap code. Findings
+   and executed evidence are in `M1_PR1_REVIEW.md` and `M1_HANDOFF_VALIDATION.json`.
+
+M1's recommendation is to retain the frozen E0-E5 results with the early-stopping
+limitation already drafted by M3. Any fixed-epoch follow-up belongs in a labelled
+post-hoc sensitivity analysis; it must not replace the main results. This records
+M1's position, not a decision on behalf of the whole team. E6 reconstruction
+diagnostics cannot support H6 without a supervised scratch/pretrained comparison.

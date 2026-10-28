@@ -3,14 +3,19 @@ from pathlib import Path
 import tempfile
 import unittest
 
-import torch
-from torch import nn
+try:
+    import torch
+except ImportError:
+    torch = None
 
 from src.data import sha256
-from src.models import ECGCNN
-from src.pretrain import ARCHITECTURE, state_digest
+if torch is not None:
+    from torch import nn
+    from src.models import ECGCNN
+    from src.pretrain import ARCHITECTURE, state_digest
 
 
+@unittest.skipIf(torch is None, "optional PyTorch not installed")
 class ECGCNNTests(unittest.TestCase):
     def setUp(self):
         torch.manual_seed(42)

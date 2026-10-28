@@ -53,8 +53,8 @@ authentication/Drive consent is handled interactively by Google, not by this cod
 
 ## Transfer into M2's classifier
 
-The repository currently has no M2 `src/models.py`. This module defines a clear
-encoder interface without replacing M2's classifier/training files. For E1 versus
+M2's `src/models.py` now imports M1's encoder for `ECGCNN`, so the architecture
+interface is aligned. No supervised E6 run is present in M3's handoff. For E1 versus
 E6 to isolate pretraining, M2 must use the **same encoder and classifier structure**
 in both runs, with the only difference being random versus pretrained encoder
 initialisation. If M2 chooses another encoder, align the autoencoder with that
@@ -68,7 +68,7 @@ from torch import nn
 from src.data import sha256
 from src.pretrain import ECGEncoder, load_pretrained_encoder
 
-protocol, seed = 'patient', 42
+protocol, seed = 'patient_strict', 42
 train_path = Path(f'data/processed/{protocol}_train.npz')
 torch.manual_seed(seed)
 

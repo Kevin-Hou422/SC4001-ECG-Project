@@ -8,6 +8,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+import numpy as np
+
 from src.data import build
 from src.prepare import ensure_prepared
 from test_data import fixture
@@ -47,6 +49,29 @@ class PrepareTests(unittest.TestCase):
             with patch("src.prepare.build", side_effect=AssertionError("must not rebuild")):
                 with contextlib.redirect_stdout(io.StringIO()):
                     self.assertEqual(ensure_prepared("unused", self.target)["status"], "passed")
+
+    def test_metadata_only_clone_replaces_foreign_container_hashes(self):
+        path = self.target / "manifest.json"
+        metadata = json.loads(path.read_text())
+        for protocol in metadata["protocols"].values():
+            for entry in protocol["files"].values():
+                entry["sha256"] = "0" * 64
+        path.write_text(json.dumps(metadata), encoding="utf-8")
+        self.assertEqual(self.run_prepare()["status"], "passed")
+        rebuilt = json.loads(path.read_text())
+        self.assertNotEqual(rebuilt["protocols"]["random"]["files"]["train"]["sha256"], "0" * 64)
+
+    def test_repacked_complete_cache_is_rejected_without_overwriting(self):
+        self.run_prepare()
+        path = self.target / "random_train.npz"
+        with np.load(path, allow_pickle=False) as archive:
+            arrays = {name: archive[name] for name in archive.files}
+        # Same arrays, different container: this cache needs its own manifest.
+        np.savez(path, **arrays)
+        repacked = path.read_bytes()
+        with self.assertRaisesRegex(ValueError, "File changed"):
+            self.run_prepare()
+        self.assertEqual(path.read_bytes(), repacked)
 
     def test_partial_cache_is_preserved_and_rejected(self):
         source = self.reference / "patient_train.npz"
