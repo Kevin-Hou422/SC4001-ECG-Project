@@ -36,17 +36,28 @@ CNN or report invented performance results. M2 owns training; M3 owns evaluation
 
 ```text
 notebooks/01_M1_Data_Setup.ipynb   # Colab entry point
+notebooks/03_M3_Evaluation.ipynb   # Colab evaluation of prediction CSVs
 src/data.py                     # download, verify, segment, split, audit, dataset
 src/prepare.py                  # safe first-run build / existing-cache reuse
 src/augmentation.py             # training-only waveform augmentation
 src/pretrain.py                 # E6 autoencoder, resume and strict encoder loading
 src/pretrain_audit.py           # independent export/data/interface checks
+src/models.py                   # M2: 1D CNN (M1's encoder + linear head, optional RR)
+src/train.py                    # M2: E0-E5 training, early stopping, checkpoints
+src/predict.py                  # test/val predictions from checkpoints (CPU or GPU)
+src/evaluate.py                 # metrics, per-patient, seeds, patient bootstrap
+src/figures.py                  # report figures (results and dataset)
+src/saliency.py                 # integrated gradients (stretch)
 tests/test_data.py              # synthetic protocol tests, not reported metrics
+tests/test_evaluate.py          # metric/IO checks on hand-made data
+tests/test_saliency.py          # attribution checks on tiny synthetic models
+tools/build_eval_notebook.py    # regenerates the M3 notebook
 data/raw/mitdb/                  # 44 original .hea/.dat/.atr triplets
 data/processed/                  # generated NPZs ignored by Git; audit metadata kept
 docs/project_plan.md            # supplied project plan, preserved verbatim
 docs/M1_HANDOFF.md              # interface and experiment caveats for M2/M3
-docs/report/                    # M1 methods, related work and AI-use drafts
+docs/M3_HANDOFF.md              # evaluation interface, data findings, review notes
+docs/report/                    # M1 + M3 report drafts, references, figures
 docs/DATA_SOURCES.md            # attribution and dataset terms
 results/                        # M2/M3 outputs (not versioned)
 requirements.txt                # portable data environment
@@ -55,8 +66,8 @@ requirements-pretrain.txt       # data requirements plus PyTorch
 artifacts/pretraining/          # six small encoder exports and full run summaries
 ```
 
-`src/models.py`, `src/train.py` and `src/evaluate.py` will be added by M2/M3.
-Mutable optimiser checkpoints and generated arrays are not repeatedly committed.
+The 18 trained E0-E5 checkpoints (`checkpoints/E*/seed*.pt`, about 60 kB each)
+are versioned so results can be reproduced without retraining. Mutable optimiser checkpoints and generated arrays are not repeatedly committed.
 The six final E6 encoder exports are explicitly versioned. Raw source files
 are unchanged and each is under 2 MB; Git LFS is unnecessary for this subset.
 
@@ -166,6 +177,45 @@ for epoch in range(20):
 For multi-worker augmentation, recreate workers each epoch
 (`persistent_workers=False`) so they receive the current epoch. M2 should also
 seed PyTorch and the DataLoader shuffle generator for reproducible training.
+
+## Evaluation (M3)
+
+Test predictions are one CSV per model seed, `results/<experiment>/seed<k>.csv`,
+with columns `pid,y_true,y_pred,p_N,p_S,p_V,p_F` (softmax probabilities) in the
+row order of the test NPZ; extra columns (`sample`, `subject_id`) are kept.
+Validation predictions sit next to them as `seed<k>_val.csv`. To produce both
+from the committed checkpoints (about 2 minutes on CPU), then evaluate:
+
+```bash
+python -m src.predict --experiments all --seeds 42 43 44   # checks each checkpoint first
+python -m src.evaluate describe-data   # dataset facts and figures -> results/data_analysis/
+python -m src.evaluate summarise       # all experiments -> results/summary/
+python -m src.evaluate summarise --reference E1 --n-boot 2000
+```
+
+`summarise` checks each CSV against the contract and against the matching test
+NPZ (same records and labels in the same order), then writes per-seed and
+mean ± SD metrics, `summary.md` tables, per-patient tables, the largest
+per-record confusions, patient-bootstrap intervals and paired differences to
+the reference experiment, and figures (PNG + PDF).
+
+- Main results always use the complete test set. `without_232` (S) and
+  `without_213` (F) are supplementary sensitivity analyses.
+- Undefined values stay NaN: precision of a never-predicted class, recall of an
+  absent class. Per-patient tables always show support.
+- Seeds give mean ± sample SD. The patient bootstrap resamples test records,
+  so its intervals show how much a result depends on which patients are tested.
+- Post-hoc (added 27 Oct, after the first test evaluation): within-record
+  ranking of S beats (`ranking_S_<exp>.csv`) and an S threshold chosen on the
+  validation predictions and scored on test (`threshold_transfer_S_<exp>.csv`).
+  They explain failures; nothing is selected on test data.
+- `python -m src.evaluate make-dummy` writes fake predictions to
+  `results/_dummy/` for trying the pipeline; outputs made from them are stamped
+  as dummy and must never be reported.
+
+`notebooks/03_M3_Evaluation.ipynb` runs the same steps in Colab. Integrated
+gradients for a trained model are in `src/saliency.py` (model-agnostic; see its
+docstring).
 
 ## Local reproduction
 

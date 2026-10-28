@@ -1,3 +1,5 @@
 numpy>=1.26.4,<3
 wfdb==4.3.1
-
+# evaluation and figures (M3); both are also wfdb dependencies
+pandas>=2.0
+matplotlib>=3.7
