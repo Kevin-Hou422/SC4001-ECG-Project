@@ -6,6 +6,28 @@ drafted in `docs/report/M3_RESULTS.md` and `docs/report/M3_DISCUSSION.md`, and
 the introduction no longer has placeholders. All 64 tests pass. Branch
 `m3-evaluation` is based on M2's `train_result` (6fb469d).
 
+## To do (please send your sections by Thu 29 Oct; M3 assembles the draft Fri 30)
+
+**Both, today (results freeze):** decide on early stopping and E6 (see
+"Decisions the team needs to make" below).
+
+**M2:**
+1. Push `results/E*/seed*_history.csv` and `results/training_summary.csv`.
+2. Write the model and training-setup section (facts in
+   `docs/report/M3_RESULTS.md` §4.1) and revise related work 2.1.
+3. Add your AI-use notes to `docs/report/M1_AI_USE_DRAFT.md`.
+4. Read the code review notes below (most urgent: note 1, `manifest.json`).
+5. Confirm it is OK to merge your `train_result` commits into `main` through
+   PR #1 (`m3-evaluation`).
+
+**M1:**
+1. Decide whether to restore your `manifest.json`
+   (`git checkout a4d0f5c -- data/processed/manifest.json`; review note 1).
+2. Update `M1_REPORT_INSERT.md` / `M1_DATA_METHODS.md`: the main patient
+   split is now `patient_strict`, not `patient`.
+3. If you have time, review PR #1 (the plan has each of us review a
+   teammate's code).
+
 ## Headline results (details: `docs/report/tables/summary_27oct.md`)
 
 | | Macro-F1 | S Se | S +P | V F1 | F F1 |
