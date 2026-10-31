@@ -8,8 +8,11 @@ installed, otherwise TeX Gyre Heros (a close Helvetica-style substitute).
 The draft uses a small Markdown subset: '#'/'##' headings, paragraphs, '- '
 lists, pipe tables preceded by a '**Table N.** caption' paragraph, figures as
 '![caption](a.png b.png){width=inches}', citations as [Key, Key] with keys from
-REFERENCES_VERIFIED.md, a '\\newpage' line, and HTML comments, which are dropped
-except for the <!-- cover --> block and the <!-- references --> marker.
+REFERENCES_VERIFIED.md, '> ' blocks for sections another member still has to
+write (printed as a highlighted box), a '\\newpage' line, and HTML comments,
+which are dropped except for the <!-- cover --> block and the <!-- references -->
+marker. 'Table N' and 'Fig. N' in the text become \\ref links to the captions
+numbered N in the draft, so LaTeX renumbers them when tables or figures are added.
 
 Once the team edits main.tex directly, that file is the master copy and this
 script should not be rerun over it.
@@ -55,6 +58,10 @@ PREAMBLE = r"""\documentclass[10pt,a4paper]{article}
 \usepackage[backend=biber,style=ieee,sorting=none,url=false,isbn=false]{biblatex}
 \addbibresource{references.bib}
 \usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+% A section another member still has to write; delete the box when it is done.
+\newcommand{\placeholder}[1]{\par\noindent\fcolorbox{orange}{orange!8}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\small #1}}\par}
 """
 
 
@@ -64,6 +71,7 @@ def bib_keys():
 
 
 KEYS = bib_keys()
+LABELS = set()  # caption numbers present in the draft, e.g. {"tab:2", "fig:C1"}
 
 
 def escape(text):
@@ -97,8 +105,15 @@ def inline(text):
             return hold(r"~\cite{" + ",".join(mapped) + "}")
         return match.group(0)
 
+    def ref(match):
+        label = ("tab:" if match.group(1) == "Table" else "fig:") + match.group(2)
+        if label not in LABELS:
+            return match.group(0)
+        return hold(("Table" if label.startswith("tab") else "Fig.") + r"~\ref{" + label + "}")
+
     text = re.sub(r"`([^`]+)`", lambda m: hold(r"\texttt{" + escape(m.group(1)) + "}"), text)
     text = re.sub(r"\s*\[([A-Za-z]\w*(?:,\s*[A-Za-z]\w*)*)\]", cite, text)
+    text = re.sub(r"\b(Table|Fig\.) ([A-Z]?\d+)\b", ref, text)
     text = re.sub(r"(\d)([⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+)",
                   lambda m: m.group(1) + hold("$^{" + m.group(2).translate(SUPERSCRIPTS) + "}$"), text)
     text = text.replace(r"\*", hold(r"\textsuperscript{*}"))
@@ -117,6 +132,12 @@ def strip_number(caption, word):
     return re.sub(rf"^\*\*{word} [A-Z]?\d+\.\*\*\s*", "", caption.strip())
 
 
+def caption_label(caption, word, prefix):
+    """\\label for a '**Table 2.**'-style caption, matching the 'Table 2' text links."""
+    number = re.match(rf"^\*\*{word} ([A-Z]?\d+)\.\*\*", caption.strip())
+    return r"\label{" + prefix + number.group(1) + "}" if number else ""
+
+
 def table(rows, caption):
     cells = [[c.strip() for c in row.strip().strip("|").split("|")] for row in rows]
     cells = [r for r in cells if not all(re.fullmatch(r":?-+:?", c) for c in r)]
@@ -131,7 +152,8 @@ def table(rows, caption):
     head = " & ".join(r"\textbf{" + inline(c) + "}" for c in cells[0]) + r" \\"
     body = [" & ".join(inline(c) for c in r) + r" \\" for r in cells[1:]]
     return "\n".join([r"\begin{table}[!htb]", r"\centering\small",
-                      r"\caption{" + inline(strip_number(caption, "Table")) + "}",
+                      r"\caption{" + inline(strip_number(caption, "Table")) + "}"
+                      + caption_label(caption, "Table", "tab:"),
                       begin, r"\toprule", head, r"\midrule", *body, r"\bottomrule", end,
                       r"\end{table}"])
 
@@ -148,7 +170,8 @@ def figure(line):
         shutil.copy2(src, OUT / "figures" / src.name)
         graphics.append(rf"\includegraphics[width={width}in]{{figures/{src.name}}}")
     return "\n".join([r"\begin{figure}[!htb]", r"\centering", r"\hspace{0.15in}".join(graphics),
-                      r"\caption{" + inline(strip_number(caption, "Figure")) + "}", r"\end{figure}"])
+                      r"\caption{" + inline(strip_number(caption, "Figure")) + "}"
+                      + caption_label(caption, "Figure", "fig:"), r"\end{figure}"])
 
 
 def cover(lines):
@@ -169,6 +192,8 @@ def convert(markdown):
     markdown = markdown.replace(cover_block.group(0), "")
     markdown = markdown.replace("<!-- references -->", "@@REFERENCES@@")
     markdown = re.sub(r"<!--.*?-->", "", markdown, flags=re.S)
+    LABELS.update("tab:" + n for n in re.findall(r"\*\*Table ([A-Z]?\d+)\.\*\*", markdown))
+    LABELS.update("fig:" + n for n in re.findall(r"\*\*Figure ([A-Z]?\d+)\.\*\*", markdown))
     blocks = re.split(r"\n\s*\n", markdown)
     out, appendix, pending_caption = [cover(cover_lines.strip().splitlines())], False, None
     for block in blocks:
@@ -220,6 +245,8 @@ def convert(markdown):
                                   *[r"\item " + inline(i) for i in items], r"\end{itemize}\par}"]))
         elif first.startswith("**Table"):
             pending_caption = " ".join(l.strip() for l in lines)
+        elif first.startswith("> "):
+            out.append(r"\placeholder{" + inline(" ".join(l[2:].strip() for l in lines)) + "}")
         else:
             out.append(inline(" ".join(l.strip() for l in lines)))
     return PREAMBLE + "\\begin{document}\n\n" + "\n\n".join(out) + "\n\n\\end{document}\n"

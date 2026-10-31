@@ -1,15 +1,31 @@
 # M3 handoff (evaluation and report)
 
-## Update 31 Oct: full report draft
+## Update 31 Oct: report skeleton, please write your sections by Sun 1 Nov
 
-- **Read the full draft:** `docs/report/latex/main.pdf` (source `main.tex`; see
-  `docs/report/README.md` for compiling locally or on Overleaf). The main body is
-  7 of the 10 allowed pages; results are unchanged from 27 Oct.
-- **M2, please check by Sun 1 Nov:** Section 2.1 (related work, your area) and
-  Section 3.4 (model and training), which M3 wrote from your code, checkpoints and
-  training histories; and fill in your part of the AI Use Statement (exact tool name
-  and how you checked its output). Thanks for the histories: they are now Fig. 4.
+The report is `docs/report/latex/main.tex` (PDF: `main.pdf`, branch `m3-report`).
+M3's sections are written: 1 Introduction, 2.3, 3.5 Evaluation, 4 Experiments and
+results, 5 Discussion, 6 Conclusion, and M3's part of the AI Use Statement. **Each
+of your sections is an orange box** in the PDF saying what to write and where your
+existing draft or the facts are. Replace the `\placeholder{...}` with your text in
+`main.tex`. Compile with `latexmk -xelatex main.tex` in `docs/report/latex/`, or
+upload that folder to Overleaf (compiler: XeLaTeX). M3's sections take about
+6.5 of the 10 pages, so together you have about 3 pages.
+
+- **M1:** 2.2 Timing features and augmentation; 3.1 Data and preprocessing;
+  3.2 Partitions (with a table of beats per partition; add `\label{tab:1}` if you
+  want it numbered first); 3.3 RR features and augmentation (please name the fourth
+  RR feature the *prematurity index*, which Section 4.4 uses); your AI-use part;
+  the data commands in Appendix A; optionally Appendix B (E6). Your
+  `M1_REPORT_INSERT.md`, `M1_RELATED_WORK.md` and `M1_AI_USE_DRAFT.md` already hold
+  most of this.
+- **M2:** 2.1 Heartbeat classification and class imbalance; 3.4 Model and training
+  (the facts are in `docs/report/M3_RESULTS.md` §4.1: 30 epochs and patience 4 were
+  used, not the script defaults); your AI-use part (exact tool and model name, and
+  how you checked its output); the training command in Appendix A. Thanks for the
+  histories: they are now Fig. 4.
 - **Everyone:** put your full name on the cover and add the group number.
+- Table and figure numbers are automatic (`\ref`), so adding a table or figure
+  renumbers the rest.
 - **M1's PR #1 review, both open findings fixed:** the report and `src/predict.py`
   no longer claim the validation check proves identical data, and `src.predict`
   now runs `ensure_prepared` (raw checksums and cache audit) first; `summarise`

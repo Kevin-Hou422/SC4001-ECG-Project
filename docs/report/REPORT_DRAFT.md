@@ -1,6 +1,6 @@
 <!--
-Assembled full report, draft v1 (M3, 31 Oct 2026). Built from M1_REPORT_INSERT.md,
-M1_RELATED_WORK.md, M3_*.md and M2's training facts (checkpoints and histories).
+Report skeleton with M3's sections written (M3, 31 Oct 2026). Sections owned by M1 and
+M2 are '> ' placeholder boxes naming the owner and the source draft; they write them.
 Citations are keys from REFERENCES_VERIFIED.md; tools/build_report.py numbers them in
 order of first use and writes the reference list. HTML comments are not printed.
 Build: python tools/build_report.py  ->  SC4001_ECG_Report_draft.docx (+ .pdf via Word)
@@ -74,42 +74,16 @@ resembles that of N beats. Our contributions are:
 
 ## 2.1 Heartbeat classification on MIT-BIH
 
-<!-- M2's area; condensed from M3's starter text (M3_RELATED_WORK.md 2.1). M2 to check. -->
-MIT-BIH contains 48 half-hour two-channel recordings from 47 subjects, sampled at 360 Hz
-[MITDB, Moody2001]. De Chazal et al. [deChazal2004] set the reference inter-patient
-protocol: the 44 non-paced recordings are divided into two sets of 22 (DS1 and DS2), one
-used to develop the classifier and the other only for the final assessment; their
-statistical classifier combined morphology and heartbeat-interval features. Later
-feature-based work targeted generalisation directly, selecting features by cross-database
-criteria [Llamedo2011] or combining RR intervals with several morphological descriptors in
-an ensemble of support vector machines [MondejarGuerra2019]. Deep networks learn features
-from the waveform instead. Kiranyaz et al. [Kiranyaz2016] trained a 1D CNN for each
-patient from common plus patient-specific labelled beats, which avoids the inter-patient
-problem but needs labelled beats from every new patient. Inter-patient deep models include
-a symbolic representation with baseline correction that reduces inter-patient variation
-[Niu2020] and networks evaluated under both paradigms [Mousavi2019, Sellami2019]. A deep
-network trained on 53,549 patients and tested on an independent set [Hannun2019] shows what
-many patients make possible; MIT-BIH offers 47 subjects, so patient-level generalisation is
-the main constraint here.
-
-Class imbalance is detrimental to CNNs, and accuracy is a poor metric under it [Buda2018].
-Common remedies change the loss: class weights raise the cost of errors on rare classes
-[Cui2019], focal loss down-weights well-classified examples so that training focuses on
-hard ones [Lin2017], and Sellami and Hwang proposed a batch-weighted loss for heartbeats
-[Sellami2019].
+> **[M2 to write: 2.1 Heartbeat classification on MIT-BIH and class imbalance, about 300
+> words.]** MIT-BIH and the DS1/DS2 inter-patient protocol, feature-based and deep
+> classifiers, and class imbalance with its loss-based remedies (weighted and focal loss,
+> which E2 and E3 test). Verified sources: `docs/report/REFERENCES_VERIFIED.md`; an
+> earlier starting text is in `docs/report/M3_RELATED_WORK.md` (2.1).
 
 ## 2.2 Timing features and data augmentation
 
-Heartbeat classification can combine waveform morphology with temporal context. De Chazal
-et al. [deChazal2004] used heartbeat-interval features with separate development and
-evaluation records; this motivates our comparison between a waveform-only CNN and one that
-also receives RR features, although our model and four-feature RR vector differ from
-theirs. Training-time augmentation is another way to improve robustness without enlarging
-the model. Nonaka and Seita [Nonaka2020] studied ECG augmentation for single-lead
-atrial-fibrillation classification, and Raghu et al. [Raghu2022] found augmentation
-effects to depend on the prediction task and learned task-specific policies. We instead fix
-a small, interpretable set of gain, noise, baseline and shift perturbations and evaluate it
-as one controlled change.
+> **[M1 to write: 2.2 Timing features and data augmentation, about 150 words.]** Source:
+> the integration-ready paragraph in `docs/report/M1_RELATED_WORK.md`.
 
 ## 2.3 Evaluation protocols and patient-level uncertainty
 
@@ -130,64 +104,39 @@ intervals alongside the pooled metrics.
 
 ## 3.1 Data and preprocessing
 
-We used the MIT-BIH Arrhythmia Database v1.0.0 [MITDB], excluding the paced records 102,
-104, 107 and 217, and verified every file against the publisher's checksums. Annotations
-were mapped to four classes: N = {N, L, R, e, j}, S = {A, a, J, S}, V = {V, E} and F = {F};
-Q beats and non-beat annotations were excluded. Around each annotated beat centre we took
-256 samples (0.71 s) of lead MLII without resampling or filtering, and removed beats
-without a complete window or without previous and next RR intervals, leaving 100,630
-beats. Waveforms and RR features were standardised with the mean and SD of each
-protocol's training beats only.
+> **[M1 to write: 3.1 Data and preprocessing.]** Source: "Data and preprocessing" in
+> `docs/report/M1_REPORT_INSERT.md` (records used, class mapping, beat windows, 100,630
+> beats, training-only standardisation).
 
 ## 3.2 Partitions
 
-E0 uses a random split of all beats, stratified by class (64/16/20% for training,
-validation and test; split seed 42). E1–E5 use the inter-patient split: training on DS1
-and testing on DS2, with DS1 records 108, 118, 203 and 223 held out for early stopping.
-DS2 was used only for the final evaluation. Because records 201 and 202 come from one
-subject, our main protocol also removes record 201 from training, giving 17 training,
-4 validation and 22 test subjects with no overlap (Table 1). The two protocols also differ
-in which patients are tested and in training size, so an E0–E1 difference cannot be
-attributed to patient overlap alone. Abnormal beats are concentrated in a few records
-(Fig. 1): record 209 holds 60% of the training S beats and record 208 holds 94% of the
-training F beats, while in the test set record 232 holds 75% of the S beats and record 213
-holds 93% of the F beats.
-
-**Table 1.** Beats per partition after preprocessing (main protocols).
-
-| Protocol | Training | Validation | Test |
-|---|---|---|---|
-| Random (E0) | 64,404 | 16,101 | 20,125 |
-| Patient, subject-disjoint (E1–E5) | 39,394 (N 35,719; S 640; V 2,640; F 395) | 9,614 (N 8,472; S 175; V 950; F 17) | 49,661 (N 44,218; S 1,836; V 3,219; F 388) |
-
-![**Figure 1.** Concentration of abnormal beats: cumulative share of each class's beats, records sorted by contribution. Left: the 17 training records; right: the 22 test records.](figures/class_concentration.png){width=6.0}
+> **[M1 to write: 3.2 Partitions, with a table of beats per partition and class.]**
+> Source: "Partitions and timing features" in `docs/report/M1_REPORT_INSERT.md`. The main
+> E1–E5 protocol is `patient_strict` (record 201 removed from training: 17 training,
+> 4 validation and 22 test subjects); E0 uses the random split.
 
 ## 3.3 RR features and augmentation
 
-For E5 we computed four RR features from consecutive annotated beats: the previous and the
-next RR interval, the mean of up to ten preceding RR intervals, and the ratio of the
-previous interval to that mean, a prematurity index on which values below 1 mark an early
-beat. Because of the next-RR feature, the task is offline classification. For E4, each
-training beat independently receives, each with probability 0.5, gain scaling in
-[0.9, 1.1], Gaussian noise (SD 0.02), sinusoidal baseline wander (amplitude 0.05,
-0.1–0.5 Hz) and a shift of up to eight samples. Labels and RR features are unchanged, and
-validation and test beats are never augmented.
+> **[M1 to write: 3.3 RR features (E5) and augmentation (E4).]** Source:
+> `docs/report/M1_REPORT_INSERT.md`. Section 4.4 uses the fourth RR feature (previous RR
+> divided by the mean of the last ten) as the *prematurity index*, so please name it here.
 
 ## 3.4 Model and training
 
-<!-- M2's area; written by M3 from src/models.py, src/pretrain.py and the checkpoints. M2 to check. -->
-All experiments use one small 1D CNN with 13,508 parameters. Three convolutional blocks
-(16, 32 and 64 channels; kernel sizes 7, 5 and 5; stride 2; group normalisation and ReLU)
-map a beat of 1 × 256 samples to 64 × 32 features; global average pooling gives a
-64-dimensional embedding and a linear layer outputs the four class logits. In E5 the four
-standardised RR features are concatenated to the embedding before the linear layer (13,524
-parameters). We trained with AdamW (learning rate 10⁻³, weight decay 10⁻⁴, batch size 256)
-for at most 30 epochs, kept the checkpoint with the best validation macro-F1, and stopped
-after 4 epochs without improvement. E2 weights the cross-entropy by inverse training-class
-frequency, normalised to mean 1 (N 0.025, S 1.389, V 0.337, F 2.250); E3 uses focal loss
-with γ = 2 [Lin2017]. Each configuration was trained with seeds 42, 43 and 44 on a GPU.
+> **[M2 to write: 3.4 Model and training, about 200 words.]** The CNN architecture and
+> parameter count, the optimiser and early-stopping settings actually used (30 epochs,
+> patience 4, not the script defaults), the E2 class weights and the E3 focal loss, and the
+> seeds and hardware. The facts are listed in `docs/report/M3_RESULTS.md` §4.1.
 
 ## 3.5 Evaluation
+
+Abnormal beats are concentrated in a few records (Fig. 1): record 209 holds 60% of the
+training S beats and record 208 holds 94% of the training F beats, while in the test set
+record 232 holds 75% of the S beats and record 213 holds 93% of the F beats. Pooled test
+scores therefore mostly describe a few patients, and our evaluation is designed around
+this.
+
+![**Figure 1.** Concentration of abnormal beats: cumulative share of each class's beats, records sorted by contribution. Left: the 17 training records; right: the 22 test records.](figures/class_concentration.png){width=6.0}
 
 We report per-class sensitivity (Se, recall), positive predictivity (+P, precision) and
 F1, and the macro-F1 over the four classes, as mean ± SD over the three seeds. Test
@@ -398,20 +347,24 @@ is to calibrate decisions per patient.
 
 # AI Use Statement
 
-<!-- M2: confirm the exact tool/model name and say how outputs were checked.
-     Yitian: add one sentence on how you reviewed and revised the M3 text. -->
 We used generative AI tools in all three roles, and each member checked the output of the
-tool they used. M1 used OpenAI Codex for the data pipeline, tests, autoencoder
-pretraining, documentation, drafts of the data and related-work text, and an assisted
-review of M3's code; outputs were checked with protocol tests, publisher checksums and
-reruns on the real data. M2 used [OpenAI GPT 6; M2 to confirm] for help with coding,
-debugging and environment set-up; [M2: how the outputs were checked]. M3 used Claude Code
-(Claude Opus 5.5) for the prediction-export, evaluation and figure code, the post-hoc
-analyses, reference checking and first drafts of Sections 1, 2.3 and 4–6; the code was
-checked with unit tests (including cross-checks against scikit-learn), every reported
-number was regenerated from the code's output, and every reference was checked against the
-publisher, PubMed or arXiv record. [Yitian: how you reviewed and revised the text.] Our
-team chose the research question, the subject-disjoint protocol and the experiments,
+tool they used.
+
+> **[M1 to write: the tools M1 used, for what, and how the outputs were checked.]** Draft:
+> `docs/report/M1_AI_USE_DRAFT.md`.
+
+> **[M2 to write: the tools M2 used (exact name and model), for what, and how the outputs
+> were checked.]**
+
+<!-- Yitian: add one sentence on how you reviewed and revised the M3 text. -->
+M3 used Claude Code (Claude Opus 5.5) for the prediction-export, evaluation and figure
+code, the post-hoc analyses, reference checking and first drafts of Sections 1, 2.3, 3.5
+and 4–6. The code was checked with unit tests (including cross-checks against
+scikit-learn), every reported number was regenerated from the code's output, and every
+reference was checked against the publisher, PubMed or arXiv record. [Yitian: how you
+reviewed and revised the text.]
+
+Our team chose the research question, the subject-disjoint protocol and the experiments,
 decided how to report the early-stopping problem, and interpreted the results. Every result
 comes from experiments we ran.
 
@@ -425,11 +378,11 @@ comes from experiments we ran.
 
 ## A Reproducing the results
 
-The code and full instructions are in the repository README. From the repository root:
+> **[M1 and M2 to write: the data-preparation (M1) and training (M2) commands, as in the
+> README.]**
 
-- `python -m src.prepare` builds and audits the data.
-- `python -m src.train --experiments all --seeds 42 43 44 --epochs 30 --patience 4`
-  trains E0–E5 (needs a CUDA GPU).
+The evaluation is reproduced from the repository root with:
+
 - `python -m src.predict` exports test predictions from the committed checkpoints (CPU is
   enough).
 - `python -m src.evaluate summarise --reference E1` writes every table and figure in this
@@ -437,11 +390,9 @@ The code and full instructions are in the repository README. From the repository
 
 ## B Autoencoder pretraining (E6)
 
-M1 pretrained six convolutional autoencoders (the encoder above with a mirrored decoder;
-two training cohorts × three seeds, ten epochs, AdamW) on training waveforms only, without
-labels, validation or test data. The encoders pass the provenance audit, but no supervised
-E6 classifier was trained, so the pretraining hypothesis remains untested. Reconstruction
-diagnostics are in `docs/report/M1_E6_RESULTS.md`.
+> **[M1 to write (optional): E6 autoencoder pretraining, and that no supervised E6
+> classifier was trained, so the pretraining hypothesis is untested.]** Source:
+> `docs/report/M1_E6_RESULTS.md`.
 
 ## C Bootstrap differences
 
