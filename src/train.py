@@ -69,41 +69,16 @@ def set_seed(seed: int):
         torch.backends.cudnn.benchmark = False
 
 
-def resolve_device(choice: str = "cuda"):
-    if choice != "cuda":
-        raise ValueError(
-            f"Only CUDA is supported, but received: {choice}"
-        )
-    # Check 1: Is PyTorch compiled with CUDA support?
-    if not torch.backends.cuda.is_built():
+def resolve_device(choice: str):
+    if choice == "auto":
+        choice = "cuda" if torch.cuda.is_available() else "cpu"
+    
+    if choice == "cuda" and not torch.cuda.is_available():
         raise RuntimeError(
-            "PyTorch was installed without CUDA support.\n"
-            "Install a CUDA-enabled version of PyTorch."
+            "CUDA requested, but PyTorch was not compiled with CUDA support "
+            "or no GPU is available."
         )
-    # Check 2: Can PyTorch access the GPU?
-    if not torch.cuda.is_available():
-        raise RuntimeError(
-            "CUDA is not available.\n"
-            f"PyTorch version: {torch.__version__}\n"
-            f"CUDA version used by PyTorch: {torch.version.cuda}\n"
-            "Check your NVIDIA driver and PyTorch installation."
-        )
-    # Check 3: Can PyTorch actually perform GPU operations?
-    try:
-        device = torch.device("cuda:0")
-        # Initialise CUDA
-        torch.cuda.init()
-        # Test GPU memory allocation and computation
-        x = torch.randn(128, 128, device=device)
-        y = x @ x
-
-        torch.cuda.synchronize(device)
-        del x, y
-    except Exception as e:
-        raise RuntimeError(
-            f"CUDA is detected, but GPU computation failed:\n{e}"
-        ) from e
-    return device
+    return torch.device(choice)
 
 
 def make_loss(name: str, train_labels: np.ndarray, device: torch.device, gamma: float):
