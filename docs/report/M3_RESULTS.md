@@ -21,11 +21,8 @@ kept, with patience 4. E2 weights the loss by inverse training frequency
 (N 0.025, S 1.389, V 0.337, F 2.250); E3 uses focal loss with γ = 2. Each
 configuration is trained with seeds 42, 43 and 44; we report mean ± SD.
 
-**Check of the evaluated models.** The test predictions were exported on CPU
-from the committed checkpoints. Before any test beat was read, every checkpoint
-reproduced its stored validation macro-F1 on our copy of the data (largest
-difference 3 × 10⁻⁴, from GPU/CPU rounding), confirming that the data and the
-normalisation are identical.
+All models were trained using the AdamW optimizer with a learning rate of 0.001, weight decay of 0.0001, and batch size of 256. Training was limited to 30 epochs, with early stopping applied after four consecutive epochs without improvement in validation macro-F1. The checkpoint achieving the highest validation macro-F1 was retained for evaluation.
+Each experimental configuration was trained using three random seeds (42, 43, and 44) to assess variability across runs. Training was performed using an NVIDIA GPU with CUDA acceleration.
 
 ## 4.2 The generalisation gap (H1: supported)
 
