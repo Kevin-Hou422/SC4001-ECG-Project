@@ -1,5 +1,31 @@
 # M3 handoff (evaluation and report)
 
+## Answers for M2 (31 Oct evening)
+
+1. **Where does early stopping go?** Describe the *setup* in 3.4 Model and training:
+   the checkpoint with the best validation macro-F1 on the four held-out DS1 records
+   (108, 118, 203, 223) is kept, at most 30 epochs, patience 4. The *finding* (it
+   stopped at epochs 1–5, before S was learned even on the training patients) is
+   already in 4.4 (Fig. 4, from your histories) and 5 Discussion. Refer to it
+   rather than repeating it. No fixed-epoch rerun: the frozen results stay, as M1
+   and M3 agreed, and it is listed as a limitation.
+2. **E6: not run; the report says "not tested"** (4.1 and Appendix B), unless the
+   team decides otherwise. Reasons: (a) E6 would use the same early stopping, so it
+   would also stop after 1–5 epochs and an E6-vs-E1 difference would say little;
+   (b) `ECGCNN.load_pretrained` requires the training NPZ to be byte-identical to
+   M1's, and your rebuilt data are not; (c) the team target is 1 Nov. If the team
+   wants to use the time before 16 Nov instead: an E6 entry in `src/train.py` and
+   `src/predict.py`, M1's original NPZs, three seeds, then M3 adds the results.
+3. **Your report parts are still empty boxes in `docs/report/latex/main.tex`**
+   (branch `m3-report`): 2.1, 3.4 and your AI-use part. The new README section is
+   useful for reproduction, but it is not the report. Your edit to
+   `M1_AI_USE_DRAFT.md` deleted your own lines and put your ChatGPT sentence
+   inside M1's paragraph; please write your part in the report's AI-use box instead.
+4. **Two code notes on `train_result`:** (a) the file `tories and summary…` at the
+   repository root is a saved `less` help screen, committed by accident in b6ae297;
+   please `git rm` it. (b) `resolve_device` now supports `cpu` and `auto`, but
+   `--device` still has `choices=["cuda"]`, so the command line cannot select them.
+
 ## Update 31 Oct: report skeleton, please write your sections by Sun 1 Nov
 
 The report is `docs/report/latex/main.tex` (PDF: `main.pdf`, branch `m3-report`).
