@@ -314,6 +314,13 @@ No classification scores are included before M2/M3 run the experiments.
 See [M1 completion status](docs/M1_COMPLETION.md) and [implementation review](docs/M1_REVIEW.md)
 for completed deliverables and the external human/runtime steps still to record.
 
+## M2 report
+The repository includes 18 trained CNN checkpoints covering experiments E0–E5, each trained using random seeds 42, 43, and 44.
+
+The checkpoints are stored in `checkpoints/E*/seed*.pt` and contain the best model weights selected using validation macro-F1.
+
+Although `checkpoints/` is listed in `.gitignore` to prevent accidental inclusion of additional model files, the 18 final checkpoints were explicitly added to Git for reproducibility. Each checkpoint can be loaded using the architecture defined in `src/models.py`.
+
 ## Attribution and AI use
 
 MIT-BIH data retain their original attribution/licence; see
