@@ -21,3 +21,8 @@ human revisions and decisions, and incorporate M2/M3's actual usage. Do not stat
 that a teammate independently reproduced results, reviewed code, or ran Colab
 unless those steps have occurred. The methods draft must be shortened/merged as
 needed to meet the report's overall ten-page limit.
+
+#M2 AI Use Statement
+
+>Gpt 6 was used to assit with code
+>More specific, debugging, environment set up
