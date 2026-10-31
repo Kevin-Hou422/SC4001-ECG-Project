@@ -105,8 +105,9 @@ def attach_beat_identity(df, arrays):
     ``sample``/``subject_id`` make each row traceable; ``pre_rr_s`` and
     ``rr_ratio`` (previous RR / mean of the last 10 RR) support failure analysis.
     """
-    if "sample" in df.columns and not np.array_equal(df["sample"].to_numpy(), arrays["sample"]):
-        raise ValueError("prediction 'sample' column disagrees with the test NPZ")
+    for column in ("sample", "subject_id"):
+        if column in df.columns and not np.array_equal(df[column].to_numpy(), arrays[column]):
+            raise ValueError(f"prediction '{column}' column disagrees with the test NPZ")
     df = df.copy()
     df["sample"] = arrays["sample"]
     df["subject_id"] = arrays["subject_id"]
@@ -126,8 +127,13 @@ def seed_files(exp_dir):
                    if re.fullmatch(r"seed\d+", p.stem)), key=lambda p: _natural_key(p.stem))
 
 
-def load_experiment(exp_dir, processed_dir=None):
-    """Load every ``seed<k>.csv`` of one experiment; all seeds share one test set."""
+def load_experiment(exp_dir, processed_dir=None, allow_unmatched=False):
+    """Load every ``seed<k>.csv`` of one experiment; all seeds share one test set.
+
+    With ``processed_dir``, every file must match a test NPZ (same records and
+    labels in the same order); ``allow_unmatched`` downgrades a mismatch to a
+    warning for generic CSV analysis, never for reported results.
+    """
     exp_dir = Path(exp_dir)
     paths = seed_files(exp_dir)
     if not paths:
@@ -138,7 +144,10 @@ def load_experiment(exp_dir, processed_dir=None):
         if processed_dir is not None:
             name, arrays = find_test_split(df, processed_dir)
             if name is None:
-                warnings.warn(f"{path}: no matching test NPZ; row-order alignment not verified")
+                message = f"{path}: no matching test NPZ in {processed_dir}; row-order alignment not verified"
+                if not allow_unmatched:
+                    raise ValueError(message + " (pass allow_unmatched / --allow-unmatched to analyse anyway)")
+                warnings.warn(message)
             else:
                 df = attach_beat_identity(df, arrays)
                 test_name = name
@@ -610,11 +619,13 @@ def write_summary_markdown(path, summary, boot, sources, dummy):
 
 
 def summarise(results_dir, processed_dir, output_dir, reference="E1", n_boot=2000,
-              figures=True, boot_metrics=("macro_f1", "S_f1", "V_f1", "F_f1")):
+              figures=True, boot_metrics=("macro_f1", "S_f1", "V_f1", "F_f1"),
+              allow_unmatched=False):
     """Evaluate every experiment under ``results_dir`` and write tables/figures."""
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    experiments = [load_experiment(p, processed_dir) for p in discover_experiments(results_dir)]
+    experiments = [load_experiment(p, processed_dir, allow_unmatched)
+                   for p in discover_experiments(results_dir)]
     if not experiments:
         raise FileNotFoundError(f"No results/<experiment>/seed*.csv found in {results_dir}")
     dummy = any(e["dummy"] for e in experiments)
@@ -659,6 +670,8 @@ def summarise(results_dir, processed_dir, output_dir, reference="E1", n_boot=200
         from . import figures as fig
         fig.experiment_figures(experiments, summary, boot, output_dir / "figures",
                                reference=reference, dummy=dummy)
+        if not dummy:
+            fig.plot_training_curves(results_dir, output_dir / "figures" / "training_curves")
     print(f"Evaluated {len(experiments)} experiment(s); wrote {output_dir}", flush=True)
     return summary
 
@@ -830,6 +843,8 @@ def main():
     run.add_argument("--reference", default="E1", help="experiment for paired differences")
     run.add_argument("--n-boot", type=int, default=2000)
     run.add_argument("--no-figures", action="store_true")
+    run.add_argument("--allow-unmatched", action="store_true",
+                     help="warn instead of failing when a CSV matches no test NPZ (not for reported results)")
     data = sub.add_parser("describe-data", help="Class concentration, S timing, trivial baseline")
     data.add_argument("--processed-dir", type=Path, default=Path("data/processed"))
     data.add_argument("--output-dir", type=Path, default=Path("results/data_analysis"))
@@ -841,7 +856,7 @@ def main():
     args = parser.parse_args()
     if args.command == "summarise":
         summarise(args.results_dir, args.processed_dir, args.output_dir, args.reference,
-                  args.n_boot, figures=not args.no_figures)
+                  args.n_boot, figures=not args.no_figures, allow_unmatched=args.allow_unmatched)
     elif args.command == "describe-data":
         describe_data(args.processed_dir, args.output_dir, args.raw_dir)
         if not args.no_figures:

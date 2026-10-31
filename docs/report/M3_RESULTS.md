@@ -24,8 +24,10 @@ configuration is trained with seeds 42, 43 and 44; we report mean ± SD.
 **Check of the evaluated models.** The test predictions were exported on CPU
 from the committed checkpoints. Before any test beat was read, every checkpoint
 reproduced its stored validation macro-F1 on our copy of the data (largest
-difference 3 × 10⁻⁴, from GPU/CPU rounding), confirming that the data and the
-normalisation are identical.
+difference 3 × 10⁻⁴, from GPU/CPU rounding), and our processed arrays passed
+the data audit against the reference manifest. This is a numerical
+reproduction check, consistent with the training data and normalisation; it
+is not a proof that the arrays are identical.
 
 ## 4.2 The generalisation gap (H1: supported)
 

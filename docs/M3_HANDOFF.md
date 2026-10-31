@@ -1,5 +1,26 @@
 # M3 handoff (evaluation and report)
 
+## Update 31 Oct: full report draft
+
+- **Read the full draft:** `docs/report/latex/main.pdf` (source `main.tex`; see
+  `docs/report/README.md` for compiling locally or on Overleaf). The main body is
+  7 of the 10 allowed pages; results are unchanged from 27 Oct.
+- **M2, please check by Sun 1 Nov:** Section 2.1 (related work, your area) and
+  Section 3.4 (model and training), which M3 wrote from your code, checkpoints and
+  training histories; and fill in your part of the AI Use Statement (exact tool name
+  and how you checked its output). Thanks for the histories: they are now Fig. 4.
+- **Everyone:** put your full name on the cover and add the group number.
+- **M1's PR #1 review, both open findings fixed:** the report and `src/predict.py`
+  no longer claim the validation check proves identical data, and `src.predict`
+  now runs `ensure_prepared` (raw checksums and cache audit) first; `summarise`
+  fails on a prediction CSV that matches no test NPZ unless `--allow-unmatched`
+  is given, and a `subject_id` column is checked too. 72 tests pass.
+- **Seeds:** three seeds are kept (not more). The main conclusions are far
+  outside seed noise, and the patient bootstrap, not the seed SD, dominates
+  the uncertainty.
+- The data figures now use the strict training split (record 209 holds 60% of
+  training S beats, not 50%), and Fig. 4 (training curves) comes from M2's histories.
+
 > M1 response, 28 Oct: the original reference manifest has been restored, both
 > M1 methods contributions and setup defaults now use `patient_strict`, and the
 > merged PR #1 has an AI-assisted M1 review in `M1_PR1_REVIEW.md` with execution
@@ -110,9 +131,10 @@ analysis (`threshold_transfer_S_<exp>.csv`). Both are reported in
 1. **`data/processed/manifest.json` was overwritten with locally rebuilt
    hashes (af46bb6).** With it, `python -m src.data audit` and the M3
    notebook's `ensure_prepared` fail for anyone whose NPZs match M1's original
-   build ("File changed: random_train.npz"). The arrays are the same (see the
-   validation check above). Only the compressed bytes differ, probably because
-   your Python 3.14 on Windows uses a different zlib (zlib-ng). Suggest
+   build ("File changed: random_train.npz"). Counts, metadata and validation
+   scores agree, so the arrays are probably the same and only the compressed
+   bytes differ (possibly a different zlib in Python 3.14 on Windows); as M1
+   notes, that is not proof. **Resolved 28 Oct: M1 restored the manifest.** Suggest
    restoring M1's manifest (`git checkout a4d0f5c -- data/processed/manifest.json`)
    and not committing locally regenerated metadata (M1 handoff note 2).
 2. **The checkpoint hash check is machine-specific.** `export_test` requires the

@@ -1,0 +1,12 @@
+# LaTeX build files (main.pdf is kept as the current draft)
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.xdv
+*.synctex.gz

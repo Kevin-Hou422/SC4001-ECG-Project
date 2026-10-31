@@ -182,6 +182,48 @@ def plot_bootstrap(boot, path, dummy=False):
         _save(fig, path, dummy)
 
 
+def plot_training_curves(results_dir, path, highlight=("E0", "E1")):
+    """Validation loss and macro-F1 per epoch from M2's ``seed<k>_history.csv``.
+
+    The ``highlight`` experiments get colour, the rest are thin grey lines; the
+    dot marks the epoch early stopping kept (best validation macro-F1). The loss
+    panel shows only ``highlight``: weighted and focal losses (E2, E3) are on
+    other scales. Returns False when no history files exist.
+    """
+    import pandas as pd
+    histories = sorted(Path(results_dir).glob("E*/seed*_history.csv"))
+    if not histories:
+        return False
+    colors = dict(zip(highlight, (CLASS_COLORS["N"], CLASS_COLORS["S"])))
+    with plt.rc_context(RC):
+        fig, axes = plt.subplots(1, 2, figsize=(TEXT_WIDTH, 2.3), layout="constrained")
+        for path_csv in histories:
+            exp = path_csv.parent.name
+            h = pd.read_csv(path_csv)
+            best = int(h["val_macro_f1"].idxmax())
+            style = (dict(color=colors[exp], lw=1.4, alpha=0.9, zorder=3) if exp in colors
+                     else dict(color=AXIS, lw=0.9, zorder=2))
+            for ax, column in zip(axes, ("val_loss", "val_macro_f1")):
+                if column == "val_loss" and exp not in colors:
+                    continue
+                ax.plot(h["epoch"], h[column], **style)
+                ax.plot(h["epoch"][best], h[column][best], "o", ms=3.5, mec="white", mew=0.6,
+                        color=style["color"], zorder=style["zorder"] + 1)
+        for ax, title in zip(axes, ("Validation loss (cross-entropy)", "Validation macro-F1")):
+            ax.set_title(title)
+            ax.set_xlabel("Epoch")
+            ax.grid(axis="y")
+            ax.set_axisbelow(True)
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        labels = [f"{exp} ({'random' if exp == 'E0' else 'patient'} split)" for exp in highlight]
+        handles = [plt.Line2D([], [], color=colors[e], lw=1.4) for e in highlight]
+        handles.append(plt.Line2D([], [], color=AXIS, lw=0.9))
+        labels.append("E2–E5 (patient split)")
+        axes[1].legend(handles, labels, loc="lower right")
+        _save(fig, path)
+    return True
+
+
 def experiment_figures(experiments, summary, boot, out_dir, reference="E1", dummy=False):
     from .evaluate import experiment_confusions, per_patient_mean
     out_dir = Path(out_dir)
@@ -299,14 +341,19 @@ def plot_templates(train, test, path, record=232):
         _save(fig, path)
 
 
-def data_figures(processed_dir, out_dir):
-    """Figures describing the labelled data (not model results)."""
+def data_figures(processed_dir, out_dir, protocol="patient_strict"):
+    """Figures describing the labelled data (not model results).
+
+    ``protocol`` picks the training records: ``patient_strict`` (main, E1-E5)
+    leaves out record 201; validation and test records are the same in both.
+    """
     processed_dir, out_dir = Path(processed_dir), Path(out_dir)
-    train = load_split(processed_dir / "patient_train.npz")
-    val = load_split(processed_dir / "patient_val.npz")
-    test = load_split(processed_dir / "patient_test.npz")
-    plot_concentration({"Training records (DS1 minus validation)": train,
-                        "Test records (DS2)": test}, out_dir / "class_concentration")
+    train = load_split(processed_dir / f"{protocol}_train.npz")
+    val = load_split(processed_dir / f"{protocol}_val.npz")
+    test = load_split(processed_dir / f"{protocol}_test.npz")
+    n_train, n_test = len(np.unique(train["pid"])), len(np.unique(test["pid"]))
+    plot_concentration({f"Training records ({n_train})": train,
+                        f"Test records ({n_test}, DS2)": test}, out_dir / "class_concentration")
     plot_rr_prematurity({"Training": train, "Validation": val, "Test": test},
                         out_dir / "rr_prematurity_S")
     plot_templates(train, test, out_dir / "templates_232")
