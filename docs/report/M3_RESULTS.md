@@ -20,6 +20,11 @@ features before the head). AdamW, learning rate 1e-3, weight decay 1e-4, batch
 kept, with patience 4. E2 weights the loss by inverse training frequency
 (N 0.025, S 1.389, V 0.337, F 2.250); E3 uses focal loss with γ = 2. Each
 configuration is trained with seeds 42, 43 and 44; we report mean ± SD.
+**Check of the evaluated models.** The test predictions were exported on CPU
+from the committed checkpoints. Before any test beat was read, every checkpoint
+reproduced its stored validation macro-F1 on our copy of the data (largest
+difference 3 × 10⁻⁴, from GPU/CPU rounding), confirming that the data and the
+normalisation are identical.
 
 ## 4.2 The generalisation gap (H1: supported)
 
