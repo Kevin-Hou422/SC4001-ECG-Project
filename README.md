@@ -315,11 +315,12 @@ See [M1 completion status](docs/M1_COMPLETION.md) and [implementation review](do
 for completed deliverables and the external human/runtime steps still to record.
 
 ## M2 report
-The repository includes 18 trained CNN checkpoints covering experiments E0–E5, each trained using random seeds 42, 43, and 44.
-
+The repository includes 18 trained CNN checkpoints covering experiments E0–E5, each was trained using a maximum of 30 epochs, with early stopping patience of 4, based on validation macro-F1. NVIDIA GPU (CUDA) acceleration is recommended to reduce training time.
 The checkpoints are stored in `checkpoints/E*/seed*.pt` and contain the best model weights selected using validation macro-F1.
 
 Although `checkpoints/` is listed in `.gitignore` to prevent accidental inclusion of additional model files, the 18 final checkpoints were explicitly added to Git for reproducibility. Each checkpoint can be loaded using the architecture defined in `src/models.py`.
+
+python -m src.train --experiments all --seeds 42 43 44 --epochs 30 --patience 4 --device cuda
 
 ## Attribution and AI use
 
