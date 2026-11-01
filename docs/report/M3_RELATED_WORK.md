@@ -26,9 +26,7 @@ needs labelled beats from every new patient. Acharya et al. [Acharya2017]
 trained a 9-layer CNN on data augmented to balance the five classes and
 reported 94.03% accuracy, falling to 89.07% when trained on the original
 imbalanced data; Kachuee et al. [Kachuee2018] reported 93.4% average accuracy
-and transferred the representation to myocardial infarction detection. Because
-about 89% of beats are N, accuracy at this level is close to what a classifier
-that always predicts N achieves (Section 1). Work that reports the
+and transferred the representation to myocardial infarction detection. Given the predominance of N-class beats in MIT-BIH, high overall accuracy may obscure poor detection of minority classes, motivating the use of class-specific metrics and macro-F1.. Work that reports the
 inter-patient paradigm includes Niu et al. [Niu2020], who reduced inter-patient
 variation with a symbolic representation that includes baseline correction
 (F1 76.6% for S, 89.7% for V), and Mousavi and Afghah [Mousavi2019] and Sellami
@@ -38,17 +36,7 @@ from 53,549 patients and evaluated it on an independent test set, which shows
 what is possible with many patients. MIT-BIH offers 47 subjects, so here
 patient-level generalisation is the main constraint.
 
-**Class imbalance** *(M2, since E2/E3 are M2's losses)*. Buda et al.
-[Buda2018] found class imbalance to be detrimental for CNNs and oversampling
-to be the most effective remedy in almost all their scenarios; they also note
-that accuracy is a poor metric for imbalanced data. An alternative is to change
-the loss. Class weights based on the effective number of samples [Cui2019]
-increase the cost of errors on rare classes, and focal loss [Lin2017]
-down-weights well-classified examples so that training focuses on hard ones.
-For heartbeats, Sellami and Hwang [Sellami2019] proposed a batch-weighted loss
-to counter class imbalance, and Acharya et al. [Acharya2017] balanced the
-classes by augmentation.
-
+**Class imbalance.** Buda et al. [Buda2018] found class imbalance to be detrimental for CNNs and oversampling to be the most effective remedy in almost all scenarios they examined; they also noted that accuracy is a poor metric for imbalanced data. An alternative is to modify the loss function. Inverse-frequency class weighting increases the penalty for errors on underrepresented classes, while Cui et al. [Cui2019] proposed a related approach based on the effective number of samples. Focal loss [Lin2017] down-weights well-classified examples so that training focuses on difficult examples. For heartbeat classification, Sellami and Hwang [Sellami2019] proposed a batch-weighted loss to address class imbalance, while Acharya et al. [Acharya2017] balanced the classes using data augmentation.
 ## 2.2 Timing features and data augmentation  *(owner: M1)*
 
 Use M1's integration-ready paragraph in `M1_RELATED_WORK.md` (de Chazal 2004;
