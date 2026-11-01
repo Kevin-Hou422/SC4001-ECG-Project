@@ -1,5 +1,22 @@
 # M3 handoff (evaluation and report)
 
+## M1 report contribution completed (1 Nov)
+
+Hou Junning filled M1's sections directly in `docs/report/latex/main.tex`: 2.2,
+3.1--3.3 (including the partition/class-count table and the prematurity-index
+definition), M1's AI-use paragraph, the data commands in Appendix A, and optional
+Appendix B. The cover has M1's full name; the group number is left for the team
+to fill in, as requested. M2's report and training-command placeholders remain
+for M2. The Markdown-to-LaTeX generator was not rerun; future edits should continue
+in `main.tex`.
+
+The matching `main.pdf` was compiled with the XeTeX-based Tectonic engine and
+Biber 2.17, with resolved citations/references and no overfull boxes. All pages
+were visually checked: A4, single column, Arial body text at 10 TeX points. The
+current main text plus AI statement occupies 8 pages; the 12-page PDF also includes
+the cover, references and appendices. Allow for M2's remaining text before the
+team's final page-count check.
+
 ## Answers for M2 (31 Oct evening)
 
 1. **Where does early stopping go?** Describe the *setup* in 3.4 Model and training:

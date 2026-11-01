@@ -29,6 +29,7 @@
   \parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\small #1}}\par}
 \begin{document}
 
+\hypersetup{pageanchor=false}
 \begin{titlepage}
 \centering
 \vspace*{3.5cm}
@@ -41,12 +42,13 @@
 {\large\bfseries Group [number]\par}
 \vspace{1.2cm}
 Huang Yitian: evaluation and report (M3)\par\vspace{0.15cm}
-[M1 full name]: data and features (M1)\par\vspace{0.15cm}
+Hou Junning: data and features (M1)\par\vspace{0.15cm}
 [M2 full name]: models and training (M2)\par\vspace{0.15cm}
 \vfill
 November 2026
 \end{titlepage}
 \setcounter{page}{1}
+\hypersetup{pageanchor=true}
 
 \section{Introduction}
 
@@ -73,7 +75,9 @@ This project asks \textbf{how much a 1D convolutional neural network (CNN) loses
 
 \subsection{Timing features and data augmentation}
 
-\placeholder{\textbf{[M1 to write: 2.2 Timing features and data augmentation, about 150 words.]} Source: the integration-ready paragraph in \texttt{docs/report/M1\_RELATED\_WORK.md}.}
+Heartbeat classification can combine waveform morphology with temporal context. de Chazal et al.~\cite{dechazal2004automatic} used morphology and heartbeat-interval features with separate development and evaluation record sets. This motivates comparing an isolated-waveform CNN with one that also consumes RR features. Our four-class neural model and four-feature timing vector differ from their classifier, so we do not claim to reproduce its reported performance.
+
+Augmentation offers a complementary way to test robustness to recording variation. Nonaka and Seita~\cite{nonaka2020augmentation} studied augmentation for single-lead atrial-fibrillation classification, a different task from our heartbeat classification. Raghu et al.~\cite{raghu2022augmentation} found that augmentation effects depend on the ECG prediction task and proposed the learned TaskAug policy. We instead fix gain, noise, baseline and alignment perturbations, keeping architecture and evaluation patients unchanged. These studies motivate testing augmentation; they do not establish that our transforms improve unseen-patient performance. We test these questions in E4 and E5.
 
 \subsection{Evaluation protocols and patient-level uncertainty}
 
@@ -83,15 +87,39 @@ An evaluation is only meaningful if the relationship between training and test d
 
 \subsection{Data and preprocessing}
 
-\placeholder{\textbf{[M1 to write: 3.1 Data and preprocessing.]} Source: “Data and preprocessing” in \texttt{docs/report/M1\_REPORT\_INSERT.md} (records used, class mapping, beat windows, 100,630 beats, training-only standardisation).}
+We used the MIT-BIH Arrhythmia Database v1.0.0~\cite{moody2005mitbih}, excluding paced records 102, 104, 107 and 217 and retaining 44 recordings. Original waveform, header and expert annotation files were verified against the publisher's SHA-256 checksums. Beat symbols were grouped into four superclasses: N=\{N,L,R,e,j\}, S=\{A,a,J,S\}, V=\{V,E\} and F=\{F\}, encoded as 0--3. N therefore includes non-ectopic types beyond normal sinus beats. Q-class targets and non-beat annotations were excluded.
+
+We selected MLII by channel name, including the second channel in record 114. Each reference annotation supplied a 256-sample window spanning $[-128,+128)$ samples at the original 360\,Hz, approximately 0.711\,s. We applied no resampling or bandpass filter. Excluding 15 Q targets, 40 boundary-crossing target windows and 48 further targets without previous/next RR context left 100,630 labelled beats; 2,991 non-target annotations were ignored. All experiments use this retained pool. For each protocol, a scalar waveform mean and population SD were fitted on training beats only and frozen for validation/test. RR features were standardised column-wise in the same way. Annotated centres make this a beat-classification experiment conditional on known beat locations, rather than a complete detection system.
 
 \subsection{Partitions}
 
-\placeholder{\textbf{[M1 to write: 3.2 Partitions, with a table of beats per partition and class.]} Source: “Partitions and timing features” in \texttt{docs/report/M1\_REPORT\_INSERT.md}. The main E1–E5 protocol is \texttt{patient\_strict} (record 201 removed from training: 17 training, 4 validation and 22 test subjects); E0 uses the random split.}
+E0 uses a stratified 80/20 development/test split, with 20\% of development reserved for validation: approximately 64/16/20 overall. The data seed is fixed at 42 across all model seeds. Subjects and neighbouring-beat context may overlap across these random partitions.
+
+E1--E5 use \texttt{patient\_strict}, based on the conventional DS1/DS2 record lists~\cite{dechazal2004automatic}. DS1 records 108, 118, 203 and 223 form validation; DS2 is reserved for final evaluation. Since records 201 and 202 belong to the same person~\cite{moody2005mitbih}, we remove record 201 from training. The resulting 17 training, four validation and 22 test subjects are disjoint. This is an explicit modification of the conventional protocol, which remains available as a reference. Table~\ref{tab:1} gives the actual retained counts. All model seeds share these partitions and their training-fitted normalisation; protocol prefixes are never mixed. Changing split also changes cohort composition and training size, so the E0/E1 gap cannot isolate patient overlap as its sole cause.
+
+\begin{table}[!htb]
+\centering\small
+\caption{Retained beats by partition and class. Random is used by E0; strict patient is used by E1--E5.}\label{tab:1}
+\begin{tabular}{llrrrrrr}
+\toprule
+\textbf{Protocol} & \textbf{Partition} & \textbf{Records} & \textbf{Beats} & \textbf{N} & \textbf{S} & \textbf{V} & \textbf{F} \\
+\midrule
+Random & Train & 44 & 64,404 & 57,627 & 1,778 & 4,485 & 514 \\
+Random & Validation & 44 & 16,101 & 14,407 & 445 & 1,121 & 128 \\
+Random & Test & 44 & 20,125 & 18,008 & 556 & 1,401 & 160 \\
+\midrule
+Strict patient & Train & 17 & 39,394 & 35,719 & 640 & 2,640 & 395 \\
+Strict patient & Validation & 4 & 9,614 & 8,472 & 175 & 950 & 17 \\
+Strict patient & Test & 22 & 49,661 & 44,218 & 1,836 & 3,219 & 388 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{RR features and augmentation}
 
-\placeholder{\textbf{[M1 to write: 3.3 RR features (E5) and augmentation (E4).]} Source: \texttt{docs/report/M1\_REPORT\_INSERT.md}. Section 4.4 uses the fourth RR feature (previous RR divided by the mean of the last ten) as the \emph{prematurity index}, so please name it here.}
+E5 adds four RR features: previous RR, next RR, the mean of up to ten preceding RR intervals including the current previous interval, and the previous RR divided by that mean, termed the \emph{prematurity index}. The first three are measured in seconds; the index is dimensionless, with values below one indicating an early beat relative to the local rhythm. Features are computed from consecutive beat annotations within each recording, retaining Q beats as timing context but excluding rhythm markers. Intervals never cross record boundaries and class identities are not feature inputs. All four columns, including the index, are standardised using training statistics. Next-RR requires future context, so E5 is offline classification.
+
+For E4, each training waveform independently receives gain scaling in $[0.9,1.1]$, Gaussian noise with SD 0.02, sinusoidal baseline wander with amplitude 0.05 and frequency in $[0.1,0.5]$\,Hz with random phase, and an integer shift in $[-8,8]$ samples, each with probability 0.5. Shifts use edge padding. Additive magnitudes are in training-standardised units. Transform randomness is determined by model seed, epoch and row index. Labels and RR features stay fixed because these perturbations model measurement variation. Validation/test waveforms are never augmented; E0--E4 do not consume RR features.
 
 \subsection{Model and training}
 
@@ -236,17 +264,20 @@ E5 & 0.863 & 0.895 & 0.994 & 0.000 \\
 
 On MIT-BIH, a 1D CNN that scores macro-F1 0.874 on a random beat split scores 0.429 on patients it has not seen and detects none of their S or F beats. Four inexpensive fixes did not change this. Class weighting raised S sensitivity to 0.83, but only by labelling entire patients S (S +P 0.115); focal loss and augmentation had no effect on S; RR features gave the only reliable macro-F1 gain (+0.016, through V). Their main effect was hidden: the model learned to rank S beats correctly within each patient (AUROC 0.994 in record 232) but never predicted them, and a threshold chosen on other patients did not fix this. Patient-wise evaluation should report per-patient results and within-patient ranking alongside pooled scores, because pooled scores can hide both failures and partial successes. The next step is to calibrate decisions per patient.
 
+\par\noindent\begin{minipage}{\linewidth}
+\setlength{\parskip}{4pt}
 \section*{AI Use Statement}
 
 We used generative AI tools in all three roles, and each member checked the output of the tool they used.
 
-\placeholder{\textbf{[M1 to write: the tools M1 used, for what, and how the outputs were checked.]} Draft: \texttt{docs/report/M1\_AI\_USE\_DRAFT.md}.}
+M1 used OpenAI Codex to assist with the data pipeline, debugging, tests, autoencoder pretraining, documentation, code review and drafting/revising Sections 2.2 and 3.1--3.3 and the data appendices. Checks included publisher checksums, protocol and leakage tests, execution on the original recordings, cache-rebuild comparisons, encoder file/tensor audits and notebook-cell execution locally and in Linux CI. Related-work claims were checked against original abstracts, authors' preprints or publisher pages, with the access scope recorded. Reconstruction diagnostics were not treated as classifier results. Codex-assisted review is not recorded as independent human peer review, and portable notebook checks are not described as a Google-hosted Colab run.
 
 \placeholder{\textbf{[M2 to write: the tools M2 used (exact name and model), for what, and how the outputs were checked.]}}
 
 M3 used Claude Code (Claude Opus 5.5) for the prediction-export, evaluation and figure code, the post-hoc analyses, reference checking and first drafts of Sections 1, 2.3, 3.5 and 4–6. The code was checked with unit tests (including cross-checks against scikit-learn), every reported number was regenerated from the code's output, and every reference was checked against the publisher, PubMed or arXiv record. [Yitian: how you reviewed and revised the text.]
 
 Our team chose the research question, the subject-disjoint protocol and the experiments, decided how to report the early-stopping problem, and interpreted the results. Every result comes from experiments we ran.
+\end{minipage}\par
 
 \clearpage
 
@@ -268,7 +299,20 @@ Our team chose the research question, the subject-disjoint protocol and the expe
 
 \section{Reproducing the results}
 
-\placeholder{\textbf{[M1 and M2 to write: the data-preparation (M1) and training (M2) commands, as in the README.]}}
+\textbf{Data preparation (M1).} From a fresh clone, run the following from the repository root; CPU is sufficient for preparation and audit:
+
+{\small\begin{verbatim}
+python -m pip install -r requirements.txt
+python -m src.prepare
+python -m src.data audit
+python -m unittest discover -s tests -v
+\end{verbatim}}
+
+The repository includes the 44 original raw recordings and reference metadata; large NPZ arrays are rebuilt locally. \texttt{src.prepare} verifies raw checksums, builds missing arrays with matching local metadata, and audits complete caches. Use \texttt{patient\_strict\_\{train,val,test\}.npz} for E1--E5 and \texttt{random\_\{train,val,test\}.npz} for E0. Install a suitable PyTorch build to execute the model/E6 tests; they are skipped in a data-only environment.
+
+NPZ byte hashes may differ across environments. Preserve any mismatched existing cache and rebuild into a new empty directory, for example \texttt{python -m src.prepare --output-dir data/processed\_v2}. Pass the new directory to prediction with \texttt{--data-dir} and to evaluation with \texttt{--processed-dir}; do not commit locally regenerated reference metadata or edit hashes to bypass an audit failure.
+
+\placeholder{\textbf{[M2 to write: the training commands and actual settings, as in the README.]}}
 
 The evaluation is reproduced from the repository root with:
 
@@ -279,8 +323,20 @@ The evaluation is reproduced from the repository root with:
 
 \section{Autoencoder pretraining (E6)}
 
-\placeholder{\textbf{[M1 to write (optional): E6 autoencoder pretraining, and that no supervised E6 classifier was trained, so the pretraining hypothesis is untested.]} Source: \texttt{docs/report/M1\_E6\_RESULTS.md}.}
+M1 pretrained a convolutional autoencoder on training waveforms only, separately for the conventional and strict patient protocols with seeds 42, 43 and 44. Three stride-two convolutional stages with 16, 32 and 64 channels, GroupNorm and ReLU map each 256-sample beat to a $64\times32$ representation; a mirrored transposed-convolution decoder reconstructs the waveform. Training minimised MSE using AdamW (learning rate 0.001, weight decay 0.0001, batch size 256) for ten fixed epochs without augmentation. Labels, validation/test waveforms and validation-based epoch selection were excluded. The final-epoch encoders, complete histories and checksums are versioned in \texttt{artifacts/pretraining/}; all six exports were independently audited.
 
+To audit the exports or repeat strict-protocol pretraining in a new output directory:
+
+{\small\begin{verbatim}
+python -m pip install -r requirements-pretrain.txt
+python -m src.pretrain_audit
+python -m src.pretrain --protocol patient_strict --seeds 42 43 44 \
+    --epochs 10 --output-dir local_pretraining
+\end{verbatim}}
+
+The continuation character above is for Bash/Colab; on other shells, place the training command on one line. A controlled E1/E6 comparison requires identical encoder/head architectures and matching training-data provenance, with only encoder initialisation changed. The exact archive-hash transfer check can reject arrays rebuilt in another environment. \textbf{No supervised E6 classifier was trained; H6 remains not tested.} Lower reconstruction MSE establishes optimisation of the pretraining objective, not improved classification or unseen-patient generalisation.
+
+\clearpage
 \section{Bootstrap differences}
 
 \begin{figure}[!htb]
