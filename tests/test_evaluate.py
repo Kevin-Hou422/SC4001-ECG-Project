@@ -224,6 +224,23 @@ class LoadingTests(unittest.TestCase):
         self.assertEqual(find_test_split(shuffled, self.dir), (None, None))
         with self.assertRaises(ValueError):
             attach_beat_identity(df.assign(sample=arrays["sample"] + 1), found)
+        with self.assertRaises(ValueError):
+            attach_beat_identity(df.assign(subject_id=arrays["subject_id"] + 1), found)
+
+    def test_unmatched_predictions_fail_unless_allowed(self):
+        arrays = make_test_split()
+        np.savez(self.dir / "patient_test.npz", **arrays)
+        exp = self.dir / "E1"
+        exp.mkdir()
+        predictions(arrays["pid"], arrays["y"], arrays["y"]).sample(frac=1, random_state=0) \
+            .to_csv(exp / "seed0.csv", index=False)
+        with self.assertRaises(ValueError):
+            load_experiment(exp, self.dir)
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            loaded = load_experiment(exp, self.dir, allow_unmatched=True)
+        self.assertIsNone(loaded["test"])
+        self.assertTrue(any("no matching test NPZ" in str(w.message) for w in caught))
 
     def test_seeds_must_share_rows(self):
         exp = self.dir / "E1"

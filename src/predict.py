@@ -5,11 +5,13 @@ M2's experiment table, ``predict_rows`` and CSV columns), with two differences:
 
 - It runs on CPU when no GPU is available. Inference is fast on CPU.
 - M2's check needs the training NPZ to be byte-identical to the one used in
-  training. NPZ bytes depend on the numpy/zlib build, so a rebuild of the same
-  data on another machine fails it. Here the check is behavioural instead:
-  every checkpoint must reproduce its stored best validation macro-F1 on the
-  local validation NPZ. A match on ~9.6k validation beats is only plausible
-  if the arrays and the train-fitted normalisation are the same.
+  training, which can fail after a rebuild with other library versions. Here
+  the local cache is first checked with M1's ``ensure_prepared`` (raw-file
+  checksums, then an audit of the processed arrays against the reference
+  manifest). Then every checkpoint must reproduce its stored best validation
+  macro-F1 on the local validation NPZ. That is a numerical reproduction
+  check: consistent with the training data and normalisation, not a proof
+  that the arrays are identical (M1's PR #1 review, finding 2).
 
 Nothing is trained or tuned: the test set is read once, after the check.
 Run from the repository root:
@@ -30,6 +32,7 @@ from torch.utils.data import DataLoader
 from . import train as m2
 from .data import CLASS_NAMES, ECGDataset, sha256
 from .models import ECGCNN
+from .prepare import ensure_prepared
 
 CHECK_COLUMNS = ["experiment", "seed", "protocol", "loss", "augmentation", "use_rr",
                  "best_epoch", "stored_val_macro_f1", "local_val_macro_f1", "abs_diff",
@@ -120,6 +123,7 @@ def main():
                         choices=[*m2.EXPERIMENTS, "all"])
     parser.add_argument("--seeds", nargs="+", type=int, default=[42, 43, 44])
     parser.add_argument("--data-dir", type=Path, default=Path("data/processed"))
+    parser.add_argument("--raw-dir", type=Path, default=Path("data/raw/mitdb"))
     parser.add_argument("--checkpoints-dir", type=Path, default=Path("checkpoints"))
     parser.add_argument("--results-dir", type=Path, default=Path("results"))
     parser.add_argument("--batch-size", type=int, default=1024)
@@ -130,6 +134,7 @@ def main():
     if args.device == "auto":
         args.device = "cuda" if torch.cuda.is_available() else "cpu"
     args.device_resolved = torch.device(args.device)
+    ensure_prepared(args.raw_dir, args.data_dir)  # raw checksums + cache audit (or a fresh build)
     exps = list(m2.EXPERIMENTS) if args.experiments == ["all"] else args.experiments
     checks = [export_one(exp, seed, args) for exp in exps for seed in args.seeds]
     m2.save_csv(args.results_dir / "export_check.csv", checks, CHECK_COLUMNS)

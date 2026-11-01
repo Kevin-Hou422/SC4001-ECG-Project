@@ -1,5 +1,68 @@
 # M3 handoff (evaluation and report)
 
+## Answers for M2 (31 Oct evening)
+
+1. **Where does early stopping go?** Describe the *setup* in 3.4 Model and training:
+   the checkpoint with the best validation macro-F1 on the four held-out DS1 records
+   (108, 118, 203, 223) is kept, at most 30 epochs, patience 4. The *finding* (it
+   stopped at epochs 1–5, before S was learned even on the training patients) is
+   already in 4.4 (Fig. 4, from your histories) and 5 Discussion. Refer to it
+   rather than repeating it. No fixed-epoch rerun: the frozen results stay, as M1
+   and M3 agreed, and it is listed as a limitation.
+2. **E6: not run; the report says "not tested"** (4.1 and Appendix B), unless the
+   team decides otherwise. Reasons: (a) E6 would use the same early stopping, so it
+   would also stop after 1–5 epochs and an E6-vs-E1 difference would say little;
+   (b) `ECGCNN.load_pretrained` requires the training NPZ to be byte-identical to
+   M1's, and your rebuilt data are not; (c) the team target is 1 Nov. If the team
+   wants to use the time before 16 Nov instead: an E6 entry in `src/train.py` and
+   `src/predict.py`, M1's original NPZs, three seeds, then M3 adds the results.
+3. **Your report parts are still empty boxes in `docs/report/latex/main.tex`**
+   (branch `m3-report`): 2.1, 3.4 and your AI-use part. The new README section is
+   useful for reproduction, but it is not the report. Your edit to
+   `M1_AI_USE_DRAFT.md` deleted your own lines and put your ChatGPT sentence
+   inside M1's paragraph; please write your part in the report's AI-use box instead.
+4. **Two code notes on `train_result`:** (a) the file `tories and summary…` at the
+   repository root is a saved `less` help screen, committed by accident in b6ae297;
+   please `git rm` it. (b) `resolve_device` now supports `cpu` and `auto`, but
+   `--device` still has `choices=["cuda"]`, so the command line cannot select them.
+
+## Update 31 Oct: report skeleton, please write your sections by Sun 1 Nov
+
+The report is `docs/report/latex/main.tex` (PDF: `main.pdf`, branch `m3-report`).
+M3's sections are written: 1 Introduction, 2.3, 3.5 Evaluation, 4 Experiments and
+results, 5 Discussion, 6 Conclusion, and M3's part of the AI Use Statement. **Each
+of your sections is an orange box** in the PDF saying what to write and where your
+existing draft or the facts are. Replace the `\placeholder{...}` with your text in
+`main.tex`. Compile with `latexmk -xelatex main.tex` in `docs/report/latex/`, or
+upload that folder to Overleaf (compiler: XeLaTeX). M3's sections take about
+6.5 of the 10 pages, so together you have about 3 pages.
+
+- **M1:** 2.2 Timing features and augmentation; 3.1 Data and preprocessing;
+  3.2 Partitions (with a table of beats per partition; add `\label{tab:1}` if you
+  want it numbered first); 3.3 RR features and augmentation (please name the fourth
+  RR feature the *prematurity index*, which Section 4.4 uses); your AI-use part;
+  the data commands in Appendix A; optionally Appendix B (E6). Your
+  `M1_REPORT_INSERT.md`, `M1_RELATED_WORK.md` and `M1_AI_USE_DRAFT.md` already hold
+  most of this.
+- **M2:** 2.1 Heartbeat classification and class imbalance; 3.4 Model and training
+  (the facts are in `docs/report/M3_RESULTS.md` §4.1: 30 epochs and patience 4 were
+  used, not the script defaults); your AI-use part (exact tool and model name, and
+  how you checked its output); the training command in Appendix A. Thanks for the
+  histories: they are now Fig. 4.
+- **Everyone:** put your full name on the cover and add the group number.
+- Table and figure numbers are automatic (`\ref`), so adding a table or figure
+  renumbers the rest.
+- **M1's PR #1 review, both open findings fixed:** the report and `src/predict.py`
+  no longer claim the validation check proves identical data, and `src.predict`
+  now runs `ensure_prepared` (raw checksums and cache audit) first; `summarise`
+  fails on a prediction CSV that matches no test NPZ unless `--allow-unmatched`
+  is given, and a `subject_id` column is checked too. 72 tests pass.
+- **Seeds:** three seeds are kept (not more). The main conclusions are far
+  outside seed noise, and the patient bootstrap, not the seed SD, dominates
+  the uncertainty.
+- The data figures now use the strict training split (record 209 holds 60% of
+  training S beats, not 50%), and Fig. 4 (training curves) comes from M2's histories.
+
 > M1 response, 28 Oct: the original reference manifest has been restored, both
 > M1 methods contributions and setup defaults now use `patient_strict`, and the
 > merged PR #1 has an AI-assisted M1 review in `M1_PR1_REVIEW.md` with execution
@@ -110,9 +173,10 @@ analysis (`threshold_transfer_S_<exp>.csv`). Both are reported in
 1. **`data/processed/manifest.json` was overwritten with locally rebuilt
    hashes (af46bb6).** With it, `python -m src.data audit` and the M3
    notebook's `ensure_prepared` fail for anyone whose NPZs match M1's original
-   build ("File changed: random_train.npz"). The arrays are the same (see the
-   validation check above). Only the compressed bytes differ, probably because
-   your Python 3.14 on Windows uses a different zlib (zlib-ng). Suggest
+   build ("File changed: random_train.npz"). Counts, metadata and validation
+   scores agree, so the arrays are probably the same and only the compressed
+   bytes differ (possibly a different zlib in Python 3.14 on Windows); as M1
+   notes, that is not proof. **Resolved 28 Oct: M1 restored the manifest.** Suggest
    restoring M1's manifest (`git checkout a4d0f5c -- data/processed/manifest.json`)
    and not committing locally regenerated metadata (M1 handoff note 2).
 2. **The checkpoint hash check is machine-specific.** `export_test` requires the

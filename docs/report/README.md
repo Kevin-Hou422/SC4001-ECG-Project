@@ -4,6 +4,13 @@ Section drafts in Markdown so they can be reviewed in Git, then merged by M3
 into the final document (A4, single column, Arial 10 pt, at most 10 pages
 excluding cover, contents, references and appendix). Full draft: Fri 30 Oct.
 
+**Report (31 Oct): `latex/main.tex` → `latex/main.pdf`.** M3's sections are
+written; M1's and M2's sections are orange placeholder boxes for them to fill in
+(see `docs/M3_HANDOFF.md`). Generated once from `REPORT_DRAFT.md` by
+`tools/build_report_tex.py`. Compile with `latexmk -xelatex main.tex` in `latex/`,
+or upload the `latex/` folder to Overleaf (compiler: XeLaTeX). From now on edit
+`latex/main.tex` directly; rerunning the build script would overwrite those edits.
+
 | Report section (target length) | Owner | Draft file(s) | Status (27 Oct) |
 |---|---|---|---|
 | 1 Introduction (1 p) | M3 | `M3_INTRODUCTION.md` | Draft v2, results filled in |
