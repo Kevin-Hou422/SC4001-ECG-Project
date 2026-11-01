@@ -71,7 +71,7 @@ This project asks \textbf{how much a 1D convolutional neural network (CNN) loses
 
 \subsection{Heartbeat classification on MIT-BIH}
 
-\placeholder{\textbf{[M2 to write: 2.1 Heartbeat classification on MIT-BIH and class imbalance, about 300 words.]} MIT-BIH and the DS1/DS2 inter-patient protocol, feature-based and deep classifiers, and class imbalance with its loss-based remedies (weighted and focal loss, which E2 and E3 test). Verified sources: \texttt{docs/report/REFERENCES\_VERIFIED.md}; an earlier starting text is in \texttt{docs/report/M3\_RELATED\_WORK.md} (2.1).}
+**Class imbalance.** ECG datasets are highly imbalanced, with normal beats dominating minority classes, making accuracy an unreliable performance metric [Buda2018]. To address this, class-weighted cross-entropy increases the penalty for misclassifying rare classes, while focal loss reduces the contribution of easily classified examples [Lin2017]. Previous ECG studies have also addressed imbalance using batch-weighted loss [Sellami2019] and data augmentation [Acharya2017]. In this study, we compare inverse-frequency class weighting (E2) and focal loss (E3) against the baseline CNN.
 
 \subsection{Timing features and data augmentation}
 
@@ -123,8 +123,16 @@ For E4, each training waveform independently receives gain scaling in $[0.9,1.1]
 
 \subsection{Model and training}
 
-\placeholder{\textbf{[M2 to write: 3.4 Model and training, about 200 words.]} The CNN architecture and parameter count, the optimiser and early-stopping settings actually used (30 epochs, patience 4, not the script defaults), the E2 class weights and the E3 focal loss, and the seeds and hardware. The facts are listed in \texttt{docs/report/M3\_RESULTS.md} §4.1.}
+### Model Training
 
+Models E0–E5 were trained using a maximum of **30 epochs**, with **early stopping patience of 4**, based on validation macro-F1. Each experiment was repeated with three random seeds (42, 43, 44). **NVIDIA GPU (CUDA) acceleration is recommended** to reduce training time.
+The validation set contained only 175 supraventricular (S) and 17 fusion (F) beats, with the S beats originating from two records. This limited minority-class representation makes validation macro-F1 sensitive to individual predictions and patient-specific characteristics. Although, early stopping may have selected checkpoints before the models learned minority-class patterns, potentially affecting generalisation.
+
+To reproduce the training:
+
+```bash
+python -m src.train --experiments all --seeds 42 43 44 --epochs 30 --patience 4 --device cuda
+```
 \subsection{Evaluation}
 
 Abnormal beats are concentrated in a few records (Fig.~\ref{fig:1}): record 209 holds 60\% of the training S beats and record 208 holds 94\% of the training F beats, while in the test set record 232 holds 75\% of the S beats and record 213 holds 93\% of the F beats. Pooled test scores therefore mostly describe a few patients, and our evaluation is designed around this.
@@ -272,7 +280,7 @@ We used generative AI tools in all three roles, and each member checked the outp
 
 M1 used OpenAI Codex for the data pipeline, autoencoder pretraining, documentation and report drafting. Outputs were verified using source-data checksums, protocol tests, encoder audits and checks against primary literature.
 
-\placeholder{\textbf{[M2 to write: the tools M2 used (exact name and model), for what, and how the outputs were checked.]}}
+M2 used OpenAI Chatgpt 6 for environment set up, model creation, finding documentation, Readme and report drafting. Outputs were verified, checked, protocol tests and checks with primary literature. 
 
 M3 used Claude Code (Claude Opus 5.5) for the prediction-export, evaluation and figure code, the post-hoc analyses, reference checking and first drafts of Sections 1, 2.3, 3.5 and 4–6. The code was checked with unit tests (including cross-checks against scikit-learn), every reported number was regenerated from the code's output, and every reference was checked against the publisher, PubMed or arXiv record. [Yitian: how you reviewed and revised the text.]
 
