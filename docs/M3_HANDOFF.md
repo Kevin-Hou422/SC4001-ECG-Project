@@ -1,5 +1,75 @@
 # M3 handoff (evaluation and report)
 
+## Update 7 Nov: M3 review of the report (please read, M2)
+
+**M1:** all M1 parts are in and checked. Nothing outstanding, thank you.
+
+**M2:** thanks for filling your boxes. Six things are left, all in
+`docs/report/latex/main.tex` on `main` (line numbers as of commit 63fc080).
+Please finish them by **Mon 9 Nov**, so there is a week for the final checks
+before 16 Nov.
+
+1. **The report no longer compiles.** Your text uses Markdown, and LaTeX stops
+   at the first `#` (line 126). The PDF in the repository is M1's build from
+   before your edits, so your text is not in any PDF yet. Use the LaTeX forms:
+
+   | Instead of (Markdown) | Write (LaTeX) |
+   |---|---|
+   | `### Model Training` | delete it; `\subsection{Model and training}` is already the heading |
+   | `**30 epochs**` | `\textbf{30 epochs}`, or no bold (methods text rarely needs it) |
+   | `` `patient_strict` `` | `\texttt{patient\_strict}` (every `_` must be written `\_`) |
+   | a block in triple backticks | `\begin{verbatim}` … `\end{verbatim}` (see Appendix A, M1's commands) |
+   | `[Buda2018]` | `\cite{Buda2018}` (the keys are in `references.bib`) |
+
+   If anything is unclear, write plain sentences and M3 will format them.
+
+2. **2.1 Heartbeat classification on MIT-BIH (line 74), about 300 words.**
+   It is now about 75 words on class imbalance only. Please add, before that
+   paragraph: MIT-BIH and the DS1/DS2 inter-patient protocol
+   (`\cite{dechazal2004automatic}`), and earlier deep classifiers on the
+   intra-patient split (Acharya2017, Kachuee2018) versus inter-patient work
+   (Niu2020, Mousavi2019, Sellami2019). Your longer revision from 1 Nov in
+   `docs/report/M3_RELATED_WORK.md` (2.1) already has most of this. Keep the
+   class-imbalance paragraph, and add `\cite{Cui2019}` where you mention
+   class weighting.
+
+3. **3.4 Model and training (line 124), about 200 words.** It should describe
+   the model and how it was trained. The facts are in
+   `docs/report/M3_RESULTS.md` §4.1:
+   - the model: 13,508-parameter 1D CNN (M1's convolutional encoder, global
+     average pooling, linear head; E5 adds the four RR features before the head,
+     13,524 parameters);
+   - training: AdamW, lr 1e-3, weight decay 1e-4, batch 256, at most 30 epochs,
+     the checkpoint with the best validation macro-F1 is kept, patience 4, seeds
+     42–44 (move these here from Appendix A, or keep both);
+   - the losses: E2 class weights N 0.025, S 1.389, V 0.337, F 2.250 (inverse
+     training frequency); E3 focal loss with γ = 2;
+   - the hardware you trained on (GPU model).
+
+   Please remove the run command and the "GPU acceleration is recommended"
+   sentence (both are reproduction details and already in Appendix A). Your
+   validation paragraph is good; one correction: 169 of the 175 validation
+   S beats come from records 118 and 223, so write "mostly from two records".
+   "Although, early stopping may have…" should read "Early stopping may
+   therefore have…".
+
+4. **AI use (line 283).** Please give the tool's exact name as it appears in
+   the app (for example "ChatGPT, GPT-5"), and say what *you* checked. The
+   current sentence "Outputs were verified, checked, protocol tests and checks
+   with primary literature" is incomplete and repeats M1's checks. For example:
+   "Code was checked by running the training script and the unit tests; text
+   was checked against the cited papers."
+
+5. **Appendix A, model training (line 323).** The content is fine; only the
+   formatting needs fixing (item 1). If you widen `--device` to
+   `choices=["cuda", "cpu", "auto"]` in `src/train.py` (line 370; `resolve_device`
+   already supports them), change "Training requires an NVIDIA GPU" to "A GPU
+   is recommended".
+
+6. **Cover (line 46):** replace `[M2 full name]` with your full name.
+
+**Team:** agree the group number for the cover (line 42).
+
 ## M1 report contribution completed (1 Nov)
 
 Hou Junning filled M1's sections directly in `docs/report/latex/main.tex`: 2.2,
