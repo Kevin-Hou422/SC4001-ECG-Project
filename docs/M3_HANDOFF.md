@@ -4,26 +4,27 @@
 
 **M1:** all M1 parts are in and checked. Nothing outstanding, thank you.
 
-**M2:** thanks for filling your boxes. Six things are left, all in
-`docs/report/latex/main.tex` on `main` (line numbers as of commit 63fc080).
-Please finish them by **Mon 9 Nov**, so there is a week for the final checks
-before 16 Nov.
+**M2:** thanks for filling your boxes. Your parts are in
+`docs/report/latex/main.tex` on `main`; line numbers below are as of the
+7 Nov formatting commit. Please finish items 2–4 by **Mon 9 Nov**, so there
+is a week for the final checks before 16 Nov.
 
-1. **The report no longer compiles.** Your text uses Markdown, and LaTeX stops
-   at the first `#` (line 126). The PDF in the repository is M1's build from
-   before your edits, so your text is not in any PDF yet. Use the LaTeX forms:
+1. **Done by M3: formatting and cover.** Your text used Markdown, so the report
+   did not compile. M3 converted it to LaTeX without changing your words
+   (bold, headings, code blocks, `\texttt{patient\_strict}`, `\cite{…}`),
+   recompiled `main.pdf` (no errors, all citations resolved, main text plus AI
+   statement 8 pages) and put "Nguyen Khanh" on the cover. When you edit, please
+   keep to LaTeX, or write plain sentences and M3 will format them:
 
    | Instead of (Markdown) | Write (LaTeX) |
    |---|---|
-   | `### Model Training` | delete it; `\subsection{Model and training}` is already the heading |
-   | `**30 epochs**` | `\textbf{30 epochs}`, or no bold (methods text rarely needs it) |
+   | `**bold**` | `\textbf{bold}` |
    | `` `patient_strict` `` | `\texttt{patient\_strict}` (every `_` must be written `\_`) |
-   | a block in triple backticks | `\begin{verbatim}` … `\end{verbatim}` (see Appendix A, M1's commands) |
+   | a block in triple backticks | `\begin{verbatim}` … `\end{verbatim}` |
    | `[Buda2018]` | `\cite{Buda2018}` (the keys are in `references.bib`) |
+   | `# heading` | nothing; `#` stops LaTeX, and the headings already exist |
 
-   If anything is unclear, write plain sentences and M3 will format them.
-
-2. **2.1 Heartbeat classification on MIT-BIH (line 74), about 300 words.**
+2. **2.1 Heartbeat classification on MIT-BIH (line 72), about 300 words.**
    It is now about 75 words on class imbalance only. Please add, before that
    paragraph: MIT-BIH and the DS1/DS2 inter-patient protocol
    (`\cite{dechazal2004automatic}`), and earlier deep classifiers on the
@@ -53,20 +54,17 @@ before 16 Nov.
    "Although, early stopping may have…" should read "Early stopping may
    therefore have…".
 
-4. **AI use (line 283).** Please give the tool's exact name as it appears in
+4. **AI use (line 282).** Please give the tool's exact name as it appears in
    the app (for example "ChatGPT, GPT-5"), and say what *you* checked. The
    current sentence "Outputs were verified, checked, protocol tests and checks
    with primary literature" is incomplete and repeats M1's checks. For example:
    "Code was checked by running the training script and the unit tests; text
    was checked against the cited papers."
 
-5. **Appendix A, model training (line 323).** The content is fine; only the
-   formatting needs fixing (item 1). If you widen `--device` to
-   `choices=["cuda", "cpu", "auto"]` in `src/train.py` (line 370; `resolve_device`
-   already supports them), change "Training requires an NVIDIA GPU" to "A GPU
-   is recommended".
-
-6. **Cover (line 46):** replace `[M2 full name]` with your full name.
+5. **Optional, Appendix A model training (line 322).** The content is fine. If
+   you widen `--device` to `choices=["cuda", "cpu", "auto"]` in `src/train.py`
+   (line 370; `resolve_device` already supports them), change "Training requires
+   an NVIDIA GPU" to "A GPU is recommended".
 
 **Team:** agree the group number for the cover (line 42).
 

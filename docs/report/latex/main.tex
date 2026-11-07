@@ -43,7 +43,7 @@
 \vspace{1.2cm}
 Huang Yitian: evaluation and report (M3)\par\vspace{0.15cm}
 Hou Junning: data and features (M1)\par\vspace{0.15cm}
-[M2 full name]: models and training (M2)\par\vspace{0.15cm}
+Nguyen Khanh: models and training (M2)\par\vspace{0.15cm}
 \vfill
 November 2026
 \end{titlepage}
@@ -71,7 +71,7 @@ This project asks \textbf{how much a 1D convolutional neural network (CNN) loses
 
 \subsection{Heartbeat classification on MIT-BIH}
 
-**Class imbalance.** ECG datasets are highly imbalanced, with normal beats dominating minority classes, making accuracy an unreliable performance metric [Buda2018]. To address this, class-weighted cross-entropy increases the penalty for misclassifying rare classes, while focal loss reduces the contribution of easily classified examples [Lin2017]. Previous ECG studies have also addressed imbalance using batch-weighted loss [Sellami2019] and data augmentation [Acharya2017]. In this study, we compare inverse-frequency class weighting (E2) and focal loss (E3) against the baseline CNN.
+\textbf{Class imbalance.} ECG datasets are highly imbalanced, with normal beats dominating minority classes, making accuracy an unreliable performance metric~\cite{Buda2018}. To address this, class-weighted cross-entropy increases the penalty for misclassifying rare classes, while focal loss reduces the contribution of easily classified examples~\cite{Lin2017}. Previous ECG studies have also addressed imbalance using batch-weighted loss~\cite{Sellami2019} and data augmentation~\cite{Acharya2017}. In this study, we compare inverse-frequency class weighting (E2) and focal loss (E3) against the baseline CNN.
 
 \subsection{Timing features and data augmentation}
 
@@ -123,16 +123,15 @@ For E4, each training waveform independently receives gain scaling in $[0.9,1.1]
 
 \subsection{Model and training}
 
-### Model Training
-
-Models E0–E5 were trained using a maximum of **30 epochs**, with **early stopping patience of 4**, based on validation macro-F1. Each experiment was repeated with three random seeds (42, 43, 44). **NVIDIA GPU (CUDA) acceleration is recommended** to reduce training time.
+Models E0–E5 were trained using a maximum of 30 epochs, with early stopping patience of 4, based on validation macro-F1. Each experiment was repeated with three random seeds (42, 43, 44). NVIDIA GPU (CUDA) acceleration is recommended to reduce training time.
 The validation set contained only 175 supraventricular (S) and 17 fusion (F) beats, with the S beats originating from two records. This limited minority-class representation makes validation macro-F1 sensitive to individual predictions and patient-specific characteristics. Although, early stopping may have selected checkpoints before the models learned minority-class patterns, potentially affecting generalisation.
 
 To reproduce the training:
 
-```bash
+{\small\begin{verbatim}
 python -m src.train --experiments all --seeds 42 43 44 --epochs 30 --patience 4 --device cuda
-```
+\end{verbatim}}
+
 \subsection{Evaluation}
 
 Abnormal beats are concentrated in a few records (Fig.~\ref{fig:1}): record 209 holds 60\% of the training S beats and record 208 holds 94\% of the training F beats, while in the test set record 232 holds 75\% of the S beats and record 213 holds 93\% of the F beats. Pooled test scores therefore mostly describe a few patients, and our evaluation is designed around this.
@@ -320,13 +319,15 @@ The repository includes the 44 original raw recordings and reference metadata; l
 
 NPZ byte hashes may differ across environments. Preserve any mismatched existing cache and rebuild into a new empty directory, for example \texttt{python -m src.prepare --output-dir data/processed\_v2}. Pass the new directory to prediction with \texttt{--data-dir} and to evaluation with \texttt{--processed-dir}; do not commit locally regenerated reference metadata or edit hashes to bypass an audit failure.
 
-**Model training (M2).** All six experiments (E0–E5) were trained using AdamW with a learning rate of \(10^{-3}\), weight decay of \(10^{-4}\), and batch size of 256. Training was limited to 30 epochs, with early stopping after four consecutive epochs without improvement in validation macro-F1. Each experiment was repeated with three seeds (42, 43, 44). E0 used the random split, while E1–E5 used the `patient_strict` protocol. Training requires an NVIDIA GPU with CUDA support in the current implementation. To reproduce the experiments, run from the repository root:
+\textbf{Model training (M2).} All six experiments (E0–E5) were trained using AdamW with a learning rate of \(10^{-3}\), weight decay of \(10^{-4}\), and batch size of 256. Training was limited to 30 epochs, with early stopping after four consecutive epochs without improvement in validation macro-F1. Each experiment was repeated with three seeds (42, 43, 44). E0 used the random split, while E1–E5 used the \texttt{patient\_strict} protocol. Training requires an NVIDIA GPU with CUDA support in the current implementation. To reproduce the experiments, run from the repository root:
 
-```bash
-python -m src.train --experiments all --seeds 42 43 44 --patient-protocol patient_strict --epochs 30 --patience 4 --batch-size 256 --lr 0.001 --weight-decay 0.0001 --device cuda
-```
+{\small\begin{verbatim}
+python -m src.train --experiments all --seeds 42 43 44 \
+    --patient-protocol patient_strict --epochs 30 --patience 4 \
+    --batch-size 256 --lr 0.001 --weight-decay 0.0001 --device cuda
+\end{verbatim}}
 
-The best checkpoint for each run is saved under `checkpoints/E*/seed*.pt`, with training histories and configurations stored in `results/E*/`.
+The best checkpoint for each run is saved under \texttt{checkpoints/E*/seed*.pt}, with training histories and configurations stored in \texttt{results/E*/}.
 
 The evaluation is reproduced from the repository root with:
 
