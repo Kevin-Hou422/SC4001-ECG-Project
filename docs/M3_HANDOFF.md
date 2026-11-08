@@ -1,5 +1,13 @@
 # M3 handoff (evaluation and report)
 
+## Update 8 Nov: M2's sections done
+
+M2 finished 2.1, 3.4 and the AI-use sentence (80f5b19); the 7 Nov items below
+are closed. M3 checked the facts and references and made formatting-only fixes:
+sentence-case headings, citation spacing, and "ChatGPT (GPT-5)". `main.pdf` is
+rebuilt (13 pages; main text plus AI statement 8). Still open: the group number
+on the cover, and M3's own revision of the M3 sections and AI-use sentence.
+
 ## Update 7 Nov: M3 review of the report (please read, M2)
 
 **M1:** all M1 parts are in and checked. Nothing outstanding, thank you.
