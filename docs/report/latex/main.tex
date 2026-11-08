@@ -69,9 +69,15 @@ This project asks \textbf{how much a 1D convolutional neural network (CNN) loses
 
 \section{Review of Existing Techniques}
 
-\subsection{Heartbeat classification on MIT-BIH}
 
-\textbf{Class imbalance.} ECG datasets are highly imbalanced, with normal beats dominating minority classes, making accuracy an unreliable performance metric~\cite{Buda2018}. To address this, class-weighted cross-entropy increases the penalty for misclassifying rare classes, while focal loss reduces the contribution of easily classified examples~\cite{Lin2017}. Previous ECG studies have also addressed imbalance using batch-weighted loss~\cite{Sellami2019} and data augmentation~\cite{Acharya2017}. In this study, we compare inverse-frequency class weighting (E2) and focal loss (E3) against the baseline CNN.
+\subsection{Heartbeat Classification on MIT-BIH}
+
+The MIT-BIH Arrhythmia Database contains 48 half-hour, two-channel ECG recordings from 47 subjects, sampled at 360 Hz \cite{moody2005mitbih}. De Chazal et al.\cite{dechazal2004automatic} established a widely
+used inter-patient evaluation protocol, dividing 44 non-paced recordings into DS1 and DS2, each containing 22 recordings. DS1 is used for training and model selection, while DS2 is reserved for independent testing. Their classifier combined ECG morphology and heartbeat-interval features. Subsequent feature-based approaches improved generalisation through feature selection \cite{Llamedo2011} and combinations of temporal and morphological descriptors \cite{MondejarGuerra2019}.
+
+\textbf{Class imbalance.}
+ECG datasets are highly imbalanced, with normal beats dominating minority classes, making accuracy an unreliable performance metric. Buda et al. \cite{Buda2018} demonstrated the negative effects of class imbalance on CNNs. Class-weighted losses penalise errors on rare classes more heavily; Cui et al. \cite{Cui2019} proposed weighting based on the effective number of samples. Focal loss \cite{Lin2017} reduces the
+contribution of easily classified examples. ECG-specific approaches include batch-weighted loss \cite{Sellami2019} and class-balancing augmentation \cite{Acharya2017}. Our study compares inverse-frequency weighting (E2) and focal loss (E3) under patient-independent evaluation.
 
 \subsection{Timing features and data augmentation}
 
@@ -121,16 +127,17 @@ E5 adds four RR features: previous RR, next RR, the mean of up to ten preceding 
 
 For E4, each training waveform independently receives gain scaling in $[0.9,1.1]$, Gaussian noise with SD 0.02, sinusoidal baseline wander with amplitude 0.05 and frequency in $[0.1,0.5]$\,Hz with random phase, and an integer shift in $[-8,8]$ samples, each with probability 0.5. Shifts use edge padding. Additive magnitudes are in training-standardised units. Transform randomness is determined by model seed, epoch and row index. Labels and RR features stay fixed because these perturbations model measurement variation. Validation/test waveforms are never augmented; E0--E4 do not consume RR features.
 
-\subsection{Model and training}
+\subsection{Model and Training}
 
-Models E0–E5 were trained using a maximum of 30 epochs, with early stopping patience of 4, based on validation macro-F1. Each experiment was repeated with three random seeds (42, 43, 44). NVIDIA GPU (CUDA) acceleration is recommended to reduce training time.
-The validation set contained only 175 supraventricular (S) and 17 fusion (F) beats, with the S beats originating from two records. This limited minority-class representation makes validation macro-F1 sensitive to individual predictions and patient-specific characteristics. Although, early stopping may have selected checkpoints before the models learned minority-class patterns, potentially affecting generalisation.
+We implemented a lightweight 1D convolutional neural network (CNN) with 13,508 trainable parameters. The model uses M1's three-block convolutional encoder, followed by global average
+pooling and a linear classification head producing four logits (N, S, V, F). For E5, four standardised RR-interval features are concatenated with the
+CNN representation before classification, increasing the parameter count to 13,524.
 
-To reproduce the training:
+Models were trained using AdamW with a learning rate of $10^{-3}$, weight decay of $10^{-4}$, and batch size 256 on an NVIDIA RTX 5050 GPU. Training was limited to 30 epochs, with
+early stopping after four consecutive epochs without improvement in validation macro-F1. The best-performing checkpoint was retained. Each experiment used three random seeds (42, 43, 44). E2 employed inverse-frequency class-weighted cross-entropy with weights 0.025 (N), 1.389 (S), 0.337 (V), and 2.250 (F). E3 used focal loss with $\gamma=2$.
 
-{\small\begin{verbatim}
-python -m src.train --experiments all --seeds 42 43 44 --epochs 30 --patience 4 --device cuda
-\end{verbatim}}
+The validation set contained only 17 F beats and 175 S beats, of which 169 originated from records 118 and 223. This limited minority-class representation makes validation macro-F1
+sensitive to individual predictions and record-specific characteristics. Early stopping may therefore have selected checkpoints before the models adequately learned minority-class patterns, potentially affecting generalisation.
 
 \subsection{Evaluation}
 
@@ -279,7 +286,7 @@ We used generative AI tools in all three roles, and each member checked the outp
 
 M1 used OpenAI Codex for the data pipeline, autoencoder pretraining, documentation and report drafting. Outputs were verified using source-data checksums, protocol tests, encoder audits and checks against primary literature.
 
-M2 used OpenAI Chatgpt 6 for environment set up, model creation, finding documentation, Readme and report drafting. Outputs were verified, checked, protocol tests and checks with primary literature. 
+M2 used OpenAI Chatgpt-5 for environment set up, model creation, finding documentation, Readme and report drafting. Code was checked by running the training script and the unit tests; text was checked against the cited papers. 
 
 M3 used Claude Code (Claude Opus 5.5) for the prediction-export, evaluation and figure code, the post-hoc analyses, reference checking and first drafts of Sections 1, 2.3, 3.5 and 4–6. The code was checked with unit tests (including cross-checks against scikit-learn), every reported number was regenerated from the code's output, and every reference was checked against the publisher, PubMed or arXiv record. [Yitian: how you reviewed and revised the text.]
 
