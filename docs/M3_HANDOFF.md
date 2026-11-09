@@ -1,5 +1,80 @@
 # M3 handoff (evaluation and report)
 
+## Update 9 Nov: final check against the handout; three code/README items
+
+M3 checked the report and the code against the project handout. The report
+meets the format rules (A4, Arial 10, single column, main text 8 of 10 pages)
+and has every required part. Every number in it matches the results. The
+reproduction route also works from the committed checkpoints. All 72 tests
+pass, the data audit passes, and `src.predict` followed by
+`src.evaluate summarise` gives the same `summary.md` as before. All 18
+checkpoints match their stored validation macro-F1 to within 3 × 10⁻⁴.
+
+`main.tex` now holds M3's revised sections. In your sections, M3 changed only
+formatting: inline maths ([−128, +128), 10⁻³, γ = 2, 64 × 32 and so on) is now
+plain text, so the whole PDF is in Arial. The team paragraph of the AI Use
+Statement now also acknowledges the libraries we built on, since the handout
+asks us to acknowledge existing code.
+
+Three items are left in the code and README. Please fix them before we build
+the submission ZIP.
+
+1. **M2: `src/train.py` defaults do not match the runs (lines 364–365).** The
+   defaults are `--epochs 25` and `--patience 6`, but all 18 checkpoints were
+   trained with 30 and 4 (stored in each checkpoint as `epochs_limit` and
+   `patience`). The docstring's command `python -m src.train --experiments all
+   --seeds 42 43 44` would therefore train different models from the ones in the
+   report. Please change the defaults to 30 and 4. The README and Appendix A
+   pass the flags explicitly, so they are already correct.
+
+2. **M2: unfinished sentence in the `src/train.py` docstring (line 6).** It
+   reads "AFTER model selection is frozen," and then stops. Suggested
+   replacement:
+
+   ```text
+   After model selection is frozen, export test predictions with
+     python -m src.predict --experiments all --seeds 42 43 44   (CPU or GPU; used for the report)
+   or
+     python -m src.train --mode predict-test                    (CUDA only)
+   ```
+
+3. **M1 and M2: the README has no single "how to reproduce" section.** The
+   handout asks for instructions that cover dependencies, data preparation and
+   commands. Ours are all there, but split across "Local reproduction",
+   "Evaluation (M3)" and "M2 report". Also, the training command (line 323)
+   is not in a code block, and `requirements.txt` has no PyTorch, which
+   prediction and training both need. Please add a section near the top, for
+   example:
+
+   ````markdown
+   ## Reproducing the main results
+
+   Python 3.10+. Run everything from the repository root.
+
+   ```bash
+   # 1. Dependencies (includes PyTorch; for training, install a CUDA build of PyTorch)
+   python -m pip install -r requirements-pretrain.txt
+   # 2. Data: verify raw checksums, build and audit the NPZ arrays, run the tests
+   python -m src.prepare
+   python -m src.data audit
+   python -m unittest discover -s tests -v
+   # 3. Optional retraining of E0-E5 (NVIDIA GPU with CUDA). The 18 checkpoints
+   #    are committed; new directories avoid overwriting them.
+   python -m src.train --experiments all --seeds 42 43 44 --patient-protocol patient_strict \
+       --epochs 30 --patience 4 --checkpoints-dir checkpoints_retrain --results-dir results_retrain
+   # 4. Test predictions from the committed checkpoints (CPU is enough)
+   python -m src.predict --experiments all --seeds 42 43 44
+   # 5. Tables and figures in the report
+   python -m src.evaluate describe-data                     # Table 1, Figs 1 and 5
+   python -m src.evaluate summarise --reference E1 --n-boot 2000   # Tables 2-4, Figs 2-4, C1
+   ```
+   ````
+
+   While editing, please also update the opening line ("M1 data pipeline for the
+   group project") to describe the whole project. The internal notes in
+   "M1 report and handoff" ("for M3 to shorten and merge…") are out of date now
+   that the report is finished.
+
 ## Update 8 Nov: M2's sections done
 
 M2 finished 2.1, 3.4 and the AI-use sentence (80f5b19); the 7 Nov items below
