@@ -68,17 +68,16 @@ def set_seed(seed: int):
 
 
 
-def resolve_device(device):
-    """Return the device to run on, falling back to CPU if GPU is unavailable."""
-    device = device.lower().strip()
-
-    if device in ("gpu", "cuda") or device.startswith("cuda:"):
-        if torch.cuda.is_available():
-            return torch.device("cuda" if device == "gpu" else device)
-        print("GPU requested but not found, falling back to CPU.")
-        return torch.device("cpu")
-
-    return torch.device(device)
+def resolve_device(choice: str):
+    if choice == "auto":
+        choice = "cuda" if torch.cuda.is_available() else "cpu"
+    
+    if choice == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError(
+            "CUDA requested, but PyTorch was not compiled with CUDA support "
+            "or no GPU is available."
+        )
+    return torch.device(choice)
 
 
 def make_loss(name: str, train_labels: np.ndarray, device: torch.device, gamma: float):
