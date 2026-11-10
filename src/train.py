@@ -3,8 +3,6 @@ Run from the repository root:
   python -m src.prepare
   python -m src.train --experiments all --seeds 42 43 44
 
-AFTER model selection is frozen,
-
 Outputs per experiment/seed:
   checkpoints/E1/seed42.pt         best validation-macro-F1 checkpoint
   results/E1/seed42_history.csv    training and validation metrics by epoch
@@ -361,8 +359,8 @@ def main():
     parser.add_argument("--data-dir", type=Path, default=Path("data/processed"))
     parser.add_argument("--checkpoints-dir", type=Path, default=Path("checkpoints"))
     parser.add_argument("--results-dir", type=Path, default=Path("results"))
-    parser.add_argument("--epochs", type=int, default=25)
-    parser.add_argument("--patience", type=int, default=6)
+    parser.add_argument("--epochs", type=int, default=30)
+    parser.add_argument("--patience", type=int, default=4)
     parser.add_argument("--batch-size", type=int, default=256)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
