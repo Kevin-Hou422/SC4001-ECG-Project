@@ -106,6 +106,46 @@ identifies a beat; preserve this pair for traceable analysis when useful.
   context. Consequently counts differ from the preliminary plan; see the generated
   `class_statistics.csv` and per-record exclusion counters in `manifest.json`.
 
+### Reproducing the Training
+
+Run the following commands from the repository root:
+
+# Install dependencies and prepare data
+python -m pip install -r requirements-pretrain.txt
+python -m src.prepare
+python -m src.data audit
+
+# Train E0–E5 with three random seeds
+python -m src.train --experiments all --seeds 42 43 44 --patient-protocol patient_strict --epochs 30 --patience 4 --batch-size 256 --lr 0.001 --weight-decay 0.0001 --device auto
+
+CPU and GPU Support
+
+Training supports both CPU and NVIDIA GPU (CUDA), with GPU acceleration recommended for faster execution.
+
+--device auto: Automatically selects CUDA if available, otherwise CPU.
+
+--device cpu: Forces CPU training.
+
+--device cuda: Requires an NVIDIA GPU with working CUDA support.
+
+CPU and GPU training may produce slightly different numerical results despite using the same random seeds.
+
+# Training Outputs
+
+The training script automatically saves:
+
+checkpoints/E*/seed*.pt: Best trained model checkpoints.
+
+results/E*/seed*_history.csv: Training and validation metrics for each epoch.
+
+results/E*/seed*_config.json: Training configurations and hyperparameters.
+
+results/E*/seed*_val.csv: Validation predictions.
+
+results/training_summary.csv: Summary of training runs.
+
+The repository includes 18 trained checkpoints from E0–E5, which can be used for evaluation without retraining.
+
 ### RR features (E5)
 
 1. Previous RR interval in seconds.
@@ -319,8 +359,6 @@ The repository includes 18 trained CNN checkpoints covering experiments E0–E5,
 The checkpoints are stored in `checkpoints/E*/seed*.pt` and contain the best model weights selected using validation macro-F1.
 
 Although `checkpoints/` is listed in `.gitignore` to prevent accidental inclusion of additional model files, the 18 final checkpoints were explicitly added to Git for reproducibility. Each checkpoint can be loaded using the architecture defined in `src/models.py`.
-
-python -m src.train --experiments all --seeds 42 43 44 --epochs 30 --patience 4 --device cuda
 
 ## Attribution and AI use
 
