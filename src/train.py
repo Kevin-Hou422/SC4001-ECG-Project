@@ -341,7 +341,7 @@ def main():
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--focal-gamma", type=float, default=2.0)
-    parser.add_argument( "--device",default="cuda",choices=["cuda"],help="Use NVIDIA GPU (CUDA required)")
+    parser.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"], help="auto: CUDA if available, else CPU")
     parser.add_argument("--cpu-threads", type=int, default=4)
     args = parser.parse_args()
     if "all" in args.experiments and len(args.experiments) != 1:
