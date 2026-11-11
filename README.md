@@ -32,6 +32,27 @@ These are pretraining results; no supervised classifier performance is claimed.
 The notebook is a setup and handoff notebook. It does **not** train the group's
 CNN or report invented performance results. M2 owns training; M3 owns evaluation.
 
+## Reproducing the main results
+
+Run the following commands from the repository root:
+
+```bash
+# Install dependencies and prepare data
+python -m pip install -r requirements-pretrain.txt
+python -m src.prepare
+python -m src.data audit
+# Test predictions from the checkpoints (CPU is enough)
+python -m src.predict --experiments all --seeds 42 43 44
+# Tables and figures in the report
+python -m src.evaluate describe-data
+python -m src.evaluate summarise --reference E1 --n-boot 2000
+# Note that training overwrites the 18 committed checkpoints in checkpoints/.
+# Anyone who only wants to check that training runs can add --checkpoints-dir checkpoints_retrain --results-dir results_retrain.
+
+# Train E0–E5 with three random seeds
+python -m src.train --experiments all --seeds 42 43 44 --patient-protocol patient_strict --epochs 30 --patience 4 --batch-size 256 --lr 0.001 --weight-decay 0.0001 --device auto
+```
+
 ## Repository layout
 
 ```text
@@ -106,19 +127,6 @@ identifies a beat; preserve this pair for traceable analysis when useful.
   context. Consequently counts differ from the preliminary plan; see the generated
   `class_statistics.csv` and per-record exclusion counters in `manifest.json`.
 
-### Reproducing the Training
-
-Run the following commands from the repository root:
-
-```bash
-# Install dependencies and prepare data
-python -m pip install -r requirements-pretrain.txt
-python -m src.prepare
-python -m src.data audit
-
-# Train E0–E5 with three random seeds
-python -m src.train --experiments all --seeds 42 43 44 --patient-protocol patient_strict --epochs 30 --patience 4 --batch-size 256 --lr 0.001 --weight-decay 0.0001 --device auto
-```
 
 ### CPU and GPU Support
 
