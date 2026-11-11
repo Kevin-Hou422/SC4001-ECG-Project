@@ -4,22 +4,38 @@
 
 [E6 pretraining Colab notebook](https://colab.research.google.com/github/Kevin-Hou422/SC4001-ECG-Project/blob/main/notebooks/02_M1_Autoencoder_Pretraining.ipynb)
 
-M1 data pipeline for the group project. The repository includes the **44 raw
+SC4001 group project (Direction A). We ask whether a small 1D CNN that classifies
+MIT-BIH heartbeats into the AAMI classes N, S, V and F still works on patients it
+has never seen. The repository holds the data pipeline, experiments E0–E5 with
+their 18 trained checkpoints, the evaluation code and the report
+([`docs/report/latex/main.pdf`](docs/report/latex/main.pdf)).
+
+The repository includes the **44 raw
 MIT-BIH records used by this project** (about 86 MB), their reference heartbeat
 annotations, publisher checksums, and a notebook that generates the model inputs.
 The four paced records (102, 104, 107, 217) are deliberately excluded. This is a
 project subset of the 48-record database, not a newly collected dataset.
 
-M1 also supplies **six trained autoencoder encoder exports** (two patient
+It also includes **six trained autoencoder encoder exports** for E6 (two patient
 protocols x three seeds, ten epochs each), with source/data checksums, histories,
-independent audit and M2 transfer instructions. See [E6 details](docs/E6_PRETRAINING.md).
-These are pretraining results; no supervised classifier performance is claimed.
+an independent audit and transfer instructions for the CNN. See [E6 details](docs/E6_PRETRAINING.md).
+These are pretraining results only; no supervised E6 classifier was trained.
+
+## Team
+
+Notes in this repository refer to members by role:
+
+| Role | Member | Main parts |
+|---|---|---|
+| M1 | Hou Junning | Data pipeline, RR features, augmentation, E6 pretraining |
+| M2 | Nguyen Khanh | CNN model and training of E0–E5 |
+| M3 | Huang Yitian | Evaluation, figures and report |
 
 ## Start in Google Colab
 
 1. Click **Open in Colab**, sign into your Google account and connect a runtime.
-2. Run the notebook from top to bottom. **CPU is sufficient for M1**; M2 can
-   choose a GPU for training later.
+2. Run the notebook from top to bottom. **CPU is sufficient for data
+   preparation**; a GPU only speeds up training.
 3. It clones this repository, installs the data dependencies, verifies raw data,
    runs protocol tests, builds the `.npz` files and audits them.
 4. Use `data/processed/patient_strict_{train,val,test}.npz` for the main E1-E5
@@ -29,8 +45,8 @@ These are pretraining results; no supervised classifier performance is claimed.
    Colab runtime files disappear when the runtime is recycled; GitHub source and
    the original raw data remain available for rebuilding.
 
-The notebook is a setup and handoff notebook. It does **not** train the group's
-CNN or report invented performance results. M2 owns training; M3 owns evaluation.
+The notebook only prepares the data. It does **not** train the CNN; training and
+evaluation use the commands in the next section.
 
 ## Reproducing the main results
 
@@ -339,24 +355,27 @@ archives cannot be used for E6 pretraining. Each epoch saves resumable state;
 Data-only environments without PyTorch skip the model/E6 tests; the full test suite
 requires PyTorch and is run in CI.
 
-## M1 report and handoff
+## Report drafts and handoff notes
+
+The final report is [`docs/report/latex/main.pdf`](docs/report/latex/main.pdf)
+(source `main.tex`). The files below are M1's working drafts, which were merged
+into it:
 
 - [Data and features draft](docs/report/M1_DATA_METHODS.md): actual retained
   counts, partitions, RR definitions, augmentation and limitations. Regenerate
   after data changes with `python tools/write_m1_report.py`.
 - [Concise integration text](docs/report/M1_REPORT_INSERT.md): shorter methods
-  contribution including E6; ready for M3 to incorporate with final experiment choices.
+  text, including E6.
 - [Executed E6 diagnostics](docs/report/M1_E6_RESULTS.md): six actual training
   runs and their interpretation limits, with [training curves](docs/pretraining_curves.png).
 - [Related-work contribution](docs/report/M1_RELATED_WORK.md): focused primary
   sources and the exact scope of claims verified.
-- [AI-use contribution](docs/report/M1_AI_USE_DRAFT.md): merge with the team's
-  actual disclosures; no independent human reproduction is claimed prematurely.
+- [AI-use contribution](docs/report/M1_AI_USE_DRAFT.md): M1's draft disclosure;
+  the final AI Use Statement is in the report.
 
-These are M1 contributions for M3 to shorten and merge into the ten-page report.
-No classification scores are included before M2/M3 run the experiments.
-See [M1 completion status](docs/M1_COMPLETION.md) and [implementation review](docs/M1_REVIEW.md)
-for completed deliverables and the external human/runtime steps still to record.
+Handoff notes between members: [M1 handoff](docs/M1_HANDOFF.md),
+[M3 handoff](docs/M3_HANDOFF.md), [M1 completion status](docs/M1_COMPLETION.md)
+and [M1 implementation review](docs/M1_REVIEW.md).
 
 ## M2 report
 The repository includes 18 trained CNN checkpoints covering experiments E0–E5, each was trained using a maximum of 30 epochs, with early stopping patience of 4, based on validation macro-F1. NVIDIA GPU (CUDA) acceleration is recommended to reduce training time.
